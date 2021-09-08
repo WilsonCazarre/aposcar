@@ -19,7 +19,6 @@ const ProfileButton: React.FC<Props> = ({ user, ...props }) => {
       <button
         className="flex items-center"
         onClick={() => {
-          console.log("called open");
           setIsModalOpen(true);
         }}
       >
@@ -31,7 +30,6 @@ const ProfileButton: React.FC<Props> = ({ user, ...props }) => {
       <ProfileModal
         isOpen={isModalOpen}
         onRequestClose={() => {
-          console.log("called close");
           setIsModalOpen(false);
         }}
         user={loggedUser as User}
