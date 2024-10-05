@@ -1,0 +1,174 @@
+{
+  "id": "3ba043c8-583a-4f6b-a5a7-132254ec7222",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.aposcar_categories": {
+      "name": "aposcar_categories",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.aposcar_nominations": {
+      "name": "aposcar_nominations",
+      "schema": "",
+      "columns": {
+        "isWinner": {
+          "name": "isWinner",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "category": {
+          "name": "category",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "primaryNominee": {
+          "name": "primaryNominee",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "secondaryNominee": {
+          "name": "secondaryNominee",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "aposcar_nominations_category_aposcar_categories_id_fk": {
+          "name": "aposcar_nominations_category_aposcar_categories_id_fk",
+          "tableFrom": "aposcar_nominations",
+          "tableTo": "aposcar_categories",
+          "columnsFrom": [
+            "category"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "aposcar_nominations_primaryNominee_aposcar_nominees_id_fk": {
+          "name": "aposcar_nominations_primaryNominee_aposcar_nominees_id_fk",
+          "tableFrom": "aposcar_nominations",
+          "tableTo": "aposcar_nominees",
+          "columnsFrom": [
+            "primaryNominee"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "aposcar_nominations_secondaryNominee_aposcar_nominees_id_fk": {
+          "name": "aposcar_nominations_secondaryNominee_aposcar_nominees_id_fk",
+          "tableFrom": "aposcar_nominations",
+          "tableTo": "aposcar_nominees",
+          "columnsFrom": [
+            "secondaryNominee"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "aposcar_nominations_primaryNominee_secondaryNominee_pk": {
+          "name": "aposcar_nominations_primaryNominee_secondaryNominee_pk",
+          "columns": [
+            "primaryNominee",
+            "secondaryNominee"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "public.aposcar_nominees": {
+      "name": "aposcar_nominees",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image": {
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
