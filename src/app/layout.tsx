@@ -15,10 +15,9 @@ export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
+    <html lang="en" className={`${GeistSans.variable} dark`}>
       <body>
-        <main className="dark flex min-h-screen flex-col items-center justify-center bg-background text-white">
-
+        <main className="min-h-screen bg-background text-white">
           <TRPCReactProvider>{children}</TRPCReactProvider>
         </main>
       </body>

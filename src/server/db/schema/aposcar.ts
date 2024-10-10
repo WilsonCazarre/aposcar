@@ -4,6 +4,7 @@
 import { relations } from "drizzle-orm";
 import {
   boolean,
+  pgEnum,
   pgTableCreator,
   primaryKey,
   text,
@@ -18,58 +19,56 @@ import {
  */
 export const createTable = pgTableCreator((name) => `aposcar_${name}`);
 
-export const category = createTable("categories", {
+export const dbtCategory = createTable("categories", {
   id: uuid("id").defaultRandom().primaryKey(),
-  slug: text("slug"),
+  slug: text("slug").unique(),
   name: text("name"),
   description: text("description"),
 });
 
-export const categoriesRelations = relations(category, ({ many }) => ({
-  nomination: many(nomination),
+export const categoriesRelations = relations(dbtCategory, ({ many }) => ({
+  nomination: many(dbtNomination),
 }));
 
-export const nominee = createTable("nominees", {
+export const dbeNomineeType = pgEnum("nomineeType", ["movie", "person"]);
+
+export const dbtNominee = createTable("nominees", {
   id: uuid("id").defaultRandom().primaryKey(),
-  slug: text("slug"),
+  slug: text("slug").unique(),
   name: text("name"),
   description: text("description"),
   image: text("image"),
+  type: dbeNomineeType("type").default("movie"),
 });
 
-export const nomineeRelations = relations(nominee, ({ many }) => ({
-  primaryNominee: many(nomination, { relationName: "primaryNominee" }),
-  secondaryNominee: many(nomination, { relationName: "secondaryNominee" }),
+export const nomineeRelations = relations(dbtNominee, ({ many }) => ({
+  primaryNominee: many(dbtNomination, { relationName: "primaryNominee" }),
+  secondaryNominee: many(dbtNomination, { relationName: "secondaryNominee" }),
 }));
 
-export const nomination = createTable(
-  "nominations",
-  {
-    isWinner: boolean("isWinner"),
-    category: uuid("category").references(() => category.id),
-    primaryNominee: uuid("primaryNominee")
-      .references(() => nominee.id)
-      .notNull(),
-    secondaryNominee: uuid("secondaryNominee").references(() => nominee.id),
-  },
-  (t) => ({
-    pk: primaryKey({ columns: [t.primaryNominee, t.secondaryNominee] }),
-  }),
-);
+export const dbtNomination = createTable("nominations", {
+  id: uuid("id").defaultRandom().notNull(),
+  isWinner: boolean("isWinner"),
+  category: uuid("category").references(() => dbtCategory.id),
+  primaryNominee: uuid("primaryNominee")
+    .references(() => dbtNominee.id)
+    .notNull(),
+  secondaryNominee: uuid("secondaryNominee").references(() => dbtNominee.id),
+});
 
-export const nominationRelations = relations(nomination, ({ one }) => ({
-  primaryNominee: one(nominee, {
-    fields: [nomination.primaryNominee],
-    references: [nominee.id],
+export const nominationRelations = relations(dbtNomination, ({ one }) => ({
+  primaryNominee: one(dbtNominee, {
+    fields: [dbtNomination.primaryNominee],
+    references: [dbtNominee.id],
     relationName: "primaryNominee",
   }),
-  secondaryNominee: one(nominee, {
-    fields: [nomination.secondaryNominee],
-    references: [nominee.id],
+  secondaryNominee: one(dbtNominee, {
+    fields: [dbtNomination.secondaryNominee],
+    references: [dbtNominee.id],
     relationName: "secondaryNominee",
   }),
-  category: one(category, {
-    fields: [nomination.category],
-    references: [category.id],
+  category: one(dbtCategory, {
+    fields: [dbtNomination.category],
+    references: [dbtCategory.id],
   }),
 }));
