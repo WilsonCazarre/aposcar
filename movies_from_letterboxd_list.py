@@ -85,7 +85,8 @@ for href in hrefs:
         print(f'Error finding tagline: {e}')
         tagline = None
 
-    description = review.find_element(By.XPATH, '//div/p').text
+    description = review.find_element(
+        By.XPATH, '//div[contains(@class, "truncate")]/p').text
     print(f'Description: {description}')
 
     title = driver.find_element(
@@ -95,12 +96,11 @@ for href in hrefs:
     try:
         poster = WebDriverWait(driver, 20).until(
             EC.presence_of_element_located(
-                (By.XPATH, '//section[contains(@class, "poster-list")]'))
+                (By.XPATH, '//section[contains(@class, "poster-list")]/a'))
         )
         print(poster.get_attribute('outerHTML'))
 
-        poster_url = poster.find_element(
-            By.TAG_NAME, 'a').get_attribute('href')
+        poster_url = poster.get_attribute('href')
         print(f'Poster URL: {poster_url}')
     except Exception as e:
         print(f'Error finding poster URL: {e}')
