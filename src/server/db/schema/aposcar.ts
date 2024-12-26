@@ -6,7 +6,6 @@ import {
   boolean,
   pgEnum,
   pgTableCreator,
-  primaryKey,
   text,
   uuid,
 } from "drizzle-orm/pg-core";
