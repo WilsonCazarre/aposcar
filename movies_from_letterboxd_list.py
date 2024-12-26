@@ -117,13 +117,13 @@ for href in hrefs:
     print(f'Slug: {slug}')
 
     movies.append({
-        'title': title,
+        'slug': slug,
+        'name': title,
         'tagline': tagline,
         'description': description,
-        'poster_url': poster_url,
-        'backdrop_url': backdrop_url,
-        'slug': slug,
-        'letterboxd_url': href,
+        'image': poster_url,
+        'backdrop': backdrop_url,
+        'letterboxd': href,
         'type': 'movie',
     })
 
