@@ -39,6 +39,9 @@ export const dbtNominee = createTable("nominees", {
   description: text("description"),
   image: text("image"),
   type: dbeNomineeType("type").default("movie"),
+  tagline: text("tagline"),
+  backdrop: text("backdrop"),
+  letterboxd: text("letterboxd"),
 });
 
 export const nomineeRelations = relations(dbtNominee, ({ many }) => ({
