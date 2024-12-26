@@ -97,7 +97,7 @@ for href in hrefs:
     try:
         poster = WebDriverWait(driver, 20).until(
             EC.presence_of_element_located(
-                (By.XPATH, '//a[contains(@data-js-trigger, "postermodal")]'))
+                (By.XPATH, '//section[contains(@class, "poster-list")]/a'))
         )
         print(poster.get_attribute('outerHTML'))
 
