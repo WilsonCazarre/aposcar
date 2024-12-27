@@ -1,9 +1,6 @@
 import { db } from "@/server/db";
 import { dbtCategory, dbtNominee } from "@/server/db/schema/aposcar";
 
-// Seed data gathered from https://theawards.vercel.app/docs
-// Award edition ID: 94 (2021)
-
 const categories = [
   {
     name: "Actor In A Leading Role",
@@ -30,10 +27,10 @@ const categories = [
     name: "Directing",
   },
   {
-    name: "Documentary (Feature)",
+    name: "Documentary Feature Film",
   },
   {
-    name: "Documentary (Short Subject)",
+    name: "Documentary Short Film",
   },
   {
     name: "Film Editing",
@@ -57,10 +54,10 @@ const categories = [
     name: "Production Design",
   },
   {
-    name: "Short Film (Animated)",
+    name: "Animated Short Film",
   },
   {
-    name: "Short Film (Live Action)",
+    name: "Live Action Short Film",
   },
   {
     name: "Sound",
@@ -74,12 +71,6 @@ const categories = [
   {
     name: "Writing (Original Screenplay)",
   },
-  {
-    name: "Jean Hersholt Humanitarian Award",
-  },
-  {
-    name: "Honorary Award",
-  },
 ].map((c) => ({
   ...c,
   slug: c.name
@@ -90,106 +81,24 @@ const categories = [
 
 const nominees = [
   {
-    name: "Belfast",
+    name: "The Amazing Spider-Man 2",
+    slug: "the-amazing-spider-man-2",
+    tagline: "His greatest battle begins.",
     description:
-      "Laura Berwick, Kenneth Branagh, Becca Kovacik and Tamar Thomas, Producers",
-    note: null,
+      "For Peter Parker, life is busy. Between taking out the bad guys as Spider-Man and spending time with the person he loves, Gwen Stacy, high school graduation cannot come quickly enough. Peter has not forgotten about the promise he made to Gwen’s father to protect her by staying away, but that is a promise he cannot keep. Things will change for Peter when a new villain, Electro, emerges, an old friend, Harry Osborn, returns, and Peter uncovers new clues about his past.",
+    image: "https://a.ltrbxd.com/resized/sm/upload/fs/xh/ms/hx/9HFdUfEuvbsaBfroPZNeDiA9W9-0-1000-0-1500-crop.jpg?v=4bb266c754",
+    backdrop: "https://a.ltrbxd.com/resized/sm/upload/8g/vh/5j/hp/the-amazing-spider-man-2-1200-1200-675-675-crop-000000.jpg",
+    letterboxd: "https://letterboxd.com/film/the-amazing-spider-man-2/",
   },
   {
-    name: "CODA",
-    description:
-      "Philippe Rousselet, Fabrice Gianfermi and Patrick Wachsberger, Producers",
-    note: null,
-  },
-  {
-    name: "Don't Look Up",
-    description: "Adam McKay and Kevin Messick, Producers",
-    note: null,
-  },
-  {
-    name: "Drive My Car",
-    description: "Teruhisa Yamamoto, Producer",
-    note: null,
-  },
-  {
-    name: "Dune",
-    description: "Mary Parent, Denis Villeneuve and Cale Boyter, Producers",
-    note: null,
-  },
-  {
-    name: "King Richard",
-    description: "Tim White, Trevor White and Will Smith, Producers",
-    note: null,
-  },
-  {
-    name: "Licorice Pizza",
-    description: "Sara Murphy, Adam Somner and Paul Thomas Anderson, Producers",
-    note: null,
-  },
-  {
-    name: "Nightmare Alley",
-    description:
-      "Guillermo del Toro, J. Miles Dale and Bradley Cooper, Producers",
-    note: null,
-  },
-  {
-    name: "The Power of the Dog",
-    description:
-      "Jane Campion, Tanya Seghatchian, Emile Sherman, Iain Canning and Roger Frappier, Producers",
-    note: null,
-  },
-  {
-    name: "West Side Story",
-    description: "Steven Spielberg and Kristie Macosko Krieger, Producers",
-    note: null,
-  },
-  {
-    name: "Kenneth Branagh",
+    name: "Emma Stone",
+    slug: "emma-stone",
+    tagline: "Emma Stone as Gwen Stacy in",
+    image: "https://image.tmdb.org/t/p/w342/8NwSfyYWIIUE1cI9Xhz92b0w7WD.jpg",
+    letterboxd: "https://letterboxd.com/actor/emma-stone/",
     type: "person" as const,
   },
-  {
-    name: "Ryusuke Hamaguchi",
-    type: "person" as const,
-  },
-  {
-    name: "Paul Thomas Anderson",
-    type: "person" as const,
-  },
-  {
-    name: "Jane Campion",
-    type: "person" as const,
-  },
-  {
-    name: "Steven Spielberg",
-    type: "person" as const,
-  },
-  {
-    name: "Don't Look Up",
-    note: null,
-  },
-  {
-    name: "Dune",
-    note: null,
-  },
-  {
-    name: "King Richard",
-    note: null,
-  },
-  {
-    name: "The Power of the Dog",
-    note: null,
-  },
-  {
-    name: "tick, tick...BOOM!",
-    note: null,
-  },
-].map((c) => ({
-  ...c,
-  slug: c.name
-    .toLowerCase()
-    .replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, "")
-    .replaceAll(" ", "-"),
-}));
+];
 
 void (async () => {
   await db
