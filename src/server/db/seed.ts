@@ -74,12 +74,6 @@ const categories = [
   {
     name: "Writing (Original Screenplay)",
   },
-  {
-    name: "Jean Hersholt Humanitarian Award",
-  },
-  {
-    name: "Honorary Award",
-  },
 ].map((c) => ({
   ...c,
   slug: c.name
