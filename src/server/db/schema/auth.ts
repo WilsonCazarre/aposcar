@@ -5,8 +5,13 @@ import {
   text,
   primaryKey,
   integer,
+  pgEnum,
 } from "drizzle-orm/pg-core";
+import { createSelectSchema } from "drizzle-zod";
 import type { AdapterAccountType } from "next-auth/adapters";
+import { z } from "zod";
+
+export const userRoles = pgEnum("userRoles", ["basic", "admin"]);
 
 export const users = pgTable("user", {
   id: text("id")
@@ -16,8 +21,11 @@ export const users = pgTable("user", {
   email: text("email").unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
-  isAdmin: boolean("isAdmin").notNull().$defaultFn(() => false),
+  role: userRoles("role").default("basic").notNull(),
 });
+
+const userSelectSchema = createSelectSchema(users);
+export type UserSelect = z.infer<typeof userSelectSchema>;
 
 export const accounts = pgTable(
   "account",
