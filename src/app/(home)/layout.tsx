@@ -16,7 +16,7 @@ export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const session = await auth();
-  if (!session) return redirect("/login");
+  
   return (
     <div className="flex flex-col items-center justify-center">
       <Navbar />
