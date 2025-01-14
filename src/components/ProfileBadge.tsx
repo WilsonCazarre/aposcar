@@ -4,8 +4,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { signOut } from "@/server/auth";
@@ -43,7 +41,7 @@ export const AvatarDropdown: React.FC<Props> = async ({ session }) => {
 
       <DropdownMenuContent>
         <DropdownMenuItem asChild>
-          <Link href="/login">Place your bets</Link>
+          <Link href="/bets">Place your bets</Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
