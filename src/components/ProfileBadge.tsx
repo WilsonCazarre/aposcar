@@ -44,6 +44,12 @@ export const AvatarDropdown: React.FC<Props> = async ({ session }) => {
           <Link href="/bets">Place your bets</Link>
         </DropdownMenuItem>
 
+        {session.user?.role === "admin" && (
+          <DropdownMenuItem asChild>
+            <Link href="/admin">Admin Tools</Link>
+            </DropdownMenuItem>
+            )}
+
         <DropdownMenuItem asChild>
           <form
             action={async () => {
