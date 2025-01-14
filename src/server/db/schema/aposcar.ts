@@ -8,6 +8,7 @@ import {
   pgTableCreator,
   text,
   uuid,
+  integer,
 } from "drizzle-orm/pg-core";
 
 /**
@@ -18,11 +19,20 @@ import {
  */
 export const createTable = pgTableCreator((name) => `aposcar_${name}`);
 
+export const dbeCategoryType = pgEnum("categoryType", ["main", "regular", "secondary",]);
+
+export const dbtCategoryTypesPoints = createTable("categoryTypesPoints", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  categoryType: dbeCategoryType("categoryType").default("regular"),
+  points: integer("points"),
+});
+
 export const dbtCategory = createTable("categories", {
   id: uuid("id").defaultRandom().primaryKey(),
   slug: text("slug").unique(),
   name: text("name"),
   description: text("description"),
+  type: dbeCategoryType("type").default("regular"),
 });
 
 export const categoriesRelations = relations(dbtCategory, ({ many }) => ({

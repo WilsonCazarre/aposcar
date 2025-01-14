@@ -1,21 +1,27 @@
 import { db } from "@/server/db";
-import { dbtCategory, dbtNominee } from "@/server/db/schema/aposcar";
+import { dbtCategory, dbtNominee, dbtCategoryTypesPoints } from "@/server/db/schema/aposcar";
 
+// TODO: Order these in a more logical way
 const categories = [
   {
     name: "Actor In A Leading Role",
+    type: "main",
   },
   {
     name: "Actor In A Supporting Role",
+    type: "main",
   },
   {
     name: "Actress In A Leading Role",
+    type: "main",
   },
   {
     name: "Actress In A Supporting Role",
+    type: "main",
   },
   {
     name: "Animated Feature Film",
+    type: "main",
   },
   {
     name: "Cinematography",
@@ -25,6 +31,7 @@ const categories = [
   },
   {
     name: "Directing",
+    type: "main",
   },
   {
     name: "Documentary Feature Film",
@@ -37,6 +44,7 @@ const categories = [
   },
   {
     name: "International Feature Film",
+    type: "main",
   },
   {
     name: "Makeup And Hairstyling",
@@ -49,6 +57,7 @@ const categories = [
   },
   {
     name: "Best Picture",
+    type: "main",
   },
   {
     name: "Production Design",
@@ -67,9 +76,11 @@ const categories = [
   },
   {
     name: "Writing (Adapted Screenplay)",
+    type: "main",
   },
   {
     name: "Writing (Original Screenplay)",
+    type: "main",
   },
 ].map((c) => ({
   ...c,
@@ -78,6 +89,21 @@ const categories = [
     .replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, "")
     .replaceAll(" ", "-"),
 }));
+
+const points = [
+  {
+    categoryType: "main",
+    points: 10,
+  },
+  {
+    categoryType: "regular",
+    points: 5,
+  },
+  {
+    categoryType: "secondary",
+    points: 3,
+  },
+]
 
 // Add the best films ever made to use as test nominees
 // Run the scripts in the scrapper branch to get and load the "real" nominees
@@ -180,4 +206,10 @@ void (async () => {
     .values(nominees)
     .onConflictDoNothing({ target: dbtNominee.slug });
   console.log("Inserted nominees: ", { nominees });
+
+  await db
+    .insert(dbtCategoryTypesPoints)
+    .values(points)
+    .onConflictDoNothing({ target: points.categoryType });
+  console.log("Inserted points: ", { points });
 })();

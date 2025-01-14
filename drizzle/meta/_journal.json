@@ -15,6 +15,13 @@
       "when": 1735256457392,
       "tag": "0001_many_mentallo",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1736881688930,
+      "tag": "0002_exotic_dakota_north",
+      "breakpoints": true
     }
   ]
 }
