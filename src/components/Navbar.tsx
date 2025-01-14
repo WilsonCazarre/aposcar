@@ -5,7 +5,7 @@ import Link from "next/link";
 export const Navbar = async () => {
   const session = await auth();
   return (
-    <nav className="flex w-full max-w-[1000px] items-center justify-between p-2">
+    <nav className="flex w-full items-center justify-between py-6 px-12">
       <Link href="/" className="hover:opacity-80 transition-opacity">
         <h1 className="text-2xl text-primary">Aposcar</h1>
       </Link>  

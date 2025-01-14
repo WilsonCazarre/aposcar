@@ -59,7 +59,7 @@ export const nomineeRelations = relations(dbtNominee, ({ many }) => ({
 }));
 
 export const dbtNomination = createTable("nominations", {
-  id: uuid("id").defaultRandom().notNull(),
+  id: uuid("id").defaultRandom().notNull().primaryKey(),
   isWinner: boolean("isWinner"),
   category: uuid("category").references(() => dbtCategory.id),
   primaryNominee: uuid("primaryNominee")

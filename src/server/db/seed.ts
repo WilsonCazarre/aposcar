@@ -6,82 +6,105 @@ const categories = [
   {
     name: "Actor In A Leading Role",
     type: "main",
+    description: "Recognizing the best performance by an actor in a leading role."
   },
   {
     name: "Actor In A Supporting Role",
     type: "main",
+    description: "Recognizing the best performance by an actor in a supporting role."
   },
   {
     name: "Actress In A Leading Role",
     type: "main",
+    description: "Recognizing the best performance by an actress in a leading role."
   },
   {
     name: "Actress In A Supporting Role",
     type: "main",
+    description: "Recognizing the best performance by an actress in a supporting role."
   },
   {
     name: "Animated Feature Film",
     type: "main",
+    description: "The best full-length film primarily created using animation."
   },
   {
     name: "Cinematography",
+    description: "Honoring outstanding achievement in motion picture photography."
   },
   {
     name: "Costume Design",
+    description: "Recognizing excellence in the creation of costumes for a film."
   },
   {
     name: "Directing",
     type: "main",
+    description: "Honoring the best achievement in film direction."
   },
   {
     name: "Documentary Feature Film",
+    description: "The best non-fiction film with a running time of 40 minutes or longer."
   },
   {
     name: "Documentary Short Film",
+    description: "The best non-fiction film with a running time of 40 minutes or less."
   },
   {
     name: "Film Editing",
+    description: "Recognizing outstanding achievement in the editing of a film."
   },
   {
     name: "International Feature Film",
     type: "main",
+    description: "The best feature-length film produced outside the United States with a predominantly non-English dialogue track."
   },
   {
     name: "Makeup And Hairstyling",
+    description: "Honoring excellence in makeup and hairstyling for a film."
   },
   {
     name: "Music (Original Score)",
+    description: "The best original musical score created specifically for a film."
   },
   {
     name: "Music (Original Song)",
+    description: "The best original song written specifically for a film."
   },
   {
     name: "Best Picture",
     type: "main",
+    description: "Honoring the producers of the year's most outstanding motion picture."
   },
   {
     name: "Production Design",
+    description: "Recognizing excellence in the visual environment and set design of a film."
   },
   {
     name: "Animated Short Film",
+    description: "The best short film primarily created using animation."
   },
   {
     name: "Live Action Short Film",
+    description: "The best short film not primarily animated."
   },
   {
     name: "Sound",
+    description: "Honoring excellence in the creation, recording, mixing, and design of a film's sound."
   },
   {
     name: "Visual Effects",
+    description: "Recognizing outstanding achievement in visual effects."
   },
   {
     name: "Writing (Adapted Screenplay)",
     type: "main",
+    description: "The best screenplay adapted from previously published or produced material."
   },
   {
     name: "Writing (Original Screenplay)",
     type: "main",
-  },
+    description: "The best screenplay not based upon previously published material."
+  }
 ].map((c) => ({
   ...c,
   slug: c.name
@@ -133,6 +156,7 @@ const nominees = [
     description: "The story follows Reinhardt through the Crusaders fated last battle at Eichenwalde, as well as his response to Winston’s call to action in the present.",
     image: "https://a.ltrbxd.com/resized/film-poster/1/2/3/0/7/1/9/1230719-overwatch-honor-and-glory-0-1000-0-1500-crop.jpg?v=82c427be7c",
     letterboxd: "https://letterboxd.com/film/overwatch-honor-and-glory/",
+    backdrop: "https://cdnb.artstation.com/p/assets/images/images/047/668/671/large/david-luong-rh6290-2.jpg?1648140143",
   },
   {
     name: "Reinhardt",
