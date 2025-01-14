@@ -4,6 +4,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { signOut } from "@/server/auth";
@@ -38,9 +40,12 @@ export const AvatarDropdown: React.FC<Props> = async ({ session }) => {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
+
       <DropdownMenuContent>
-        {/* <DropdownMenuLabel>Sua Conta</DropdownMenuLabel> */}
-        {/* <DropdownMenuSeparator /> */}
+        <DropdownMenuItem asChild>
+          <Link href="/login">Place your bets</Link>
+        </DropdownMenuItem>
+
         <DropdownMenuItem asChild>
           <form
             action={async () => {
@@ -50,7 +55,7 @@ export const AvatarDropdown: React.FC<Props> = async ({ session }) => {
           >
             <button type="submit" className="flex items-center gap-x-1">
               <PhSignOut />
-              Sair da Conta
+              Sign out
             </button>
           </form>
         </DropdownMenuItem>
