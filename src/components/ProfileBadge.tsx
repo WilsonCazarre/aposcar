@@ -9,14 +9,24 @@ import {
 import { signOut } from "@/server/auth";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import PhSignOut from "~icons/ph/sign-out";
-
 import { type Session } from "next-auth";
+import Link from "next/link";
 
 interface Props {
-  session: Session;
+  session: Session | null;
 }
 
-export const AvatarDropdown: React.FC<Props> = async ({ session }) => {
+const LoginButton = () => (
+  <Button variant="ghost" asChild>
+    <Link href="/login">Login</Link>
+  </Button>
+);
+
+export const AvatarDropdown: React.FC<Props> = async ({ session }) => {  
+  if (!session) {
+    return <LoginButton />;
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
