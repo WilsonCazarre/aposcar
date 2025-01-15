@@ -20,6 +20,18 @@ const config = {
     );
     return config;
   },
+  images: {
+    remotePatterns: [{
+      protocol: 'https',
+      hostname: 'a.ltrbxd.com',
+    }, {
+      protocol: 'https',
+      hostname: 'image.tmdb.org',
+    }, {
+      protocol: 'https',
+      hostname: '**',
+    }]
+  },
 };
 
 export default config;

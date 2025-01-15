@@ -1,6 +1,7 @@
 import { db } from "@/server/db";
 import { redirect } from "next/navigation";
 
+// TODO: Essa página pode conter a lista de categorias e mostrar quais o usuário ainda não apostou
 export default async function BetsPage() {
   const firstCategory = await db.query.dbtCategory.findFirst({
     orderBy: (categories, { asc }) => [asc(categories.name)],
