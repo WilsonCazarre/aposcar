@@ -4,6 +4,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { signOut } from "@/server/auth";
@@ -41,7 +42,7 @@ export const AvatarDropdown: React.FC<Props> = async ({ session }) => {
 
       <DropdownMenuContent>
         <DropdownMenuItem asChild>
-          <Link href="/bets">Place your bets</Link>
+          <Link href="/votes">Cast your vote!</Link>
         </DropdownMenuItem>
 
         {session.user?.role === "admin" && (
@@ -49,6 +50,8 @@ export const AvatarDropdown: React.FC<Props> = async ({ session }) => {
             <Link href="/admin">Admin Tools</Link>
           </DropdownMenuItem>
         )}
+
+        <DropdownMenuSeparator />
 
         <DropdownMenuItem asChild>
           <form

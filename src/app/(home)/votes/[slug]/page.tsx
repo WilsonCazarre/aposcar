@@ -53,7 +53,7 @@ async function getCategoryWithNavigation(slug: string) {
   };
 }
 
-const BetPage = async ({ params }: { params: { slug: string } }) => {
+const VotePage = async ({ params }: { params: { slug: string } }) => {
   const {
     currentCategory,
     prevCategory,
@@ -76,7 +76,7 @@ const BetPage = async ({ params }: { params: { slug: string } }) => {
         {/* Back button */}
         <div className="self-end">
           <Button variant="outline" asChild className="h-12 w-12 p-0">
-            <Link href={`/bets/${prevCategory?.slug}`}>
+            <Link href={`/votes/${prevCategory?.slug}`}>
               <PhArrowUp className="h-5 w-5" />
             </Link>
           </Button>
@@ -103,7 +103,7 @@ const BetPage = async ({ params }: { params: { slug: string } }) => {
         {/* Next button */}
         <div className="self-end">
           <Button variant="outline" asChild className="h-12 w-12 p-0">
-            <Link href={`/bets/${nextCategory?.slug}`}>
+            <Link href={`/votes/${nextCategory?.slug}`}>
               <PhArrowDown className="h-5 w-5" />
             </Link>
           </Button>
@@ -113,4 +113,4 @@ const BetPage = async ({ params }: { params: { slug: string } }) => {
   );
 };
 
-export default BetPage;
+export default VotePage;
