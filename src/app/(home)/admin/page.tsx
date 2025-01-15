@@ -1,53 +1,58 @@
 import { db } from "@/server/db";
 import { dbtNomination } from "@/server/db/schema/aposcar";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { revalidatePath } from "next/cache";
 
-
 async function createNomination(formData: FormData) {
-  'use server'
+  "use server";
 
-  const categoryId = formData.get('category') as string
-  const primaryNomineeId = formData.get('primaryNominee') as string
-  const secondaryNomineeId = formData.get('secondaryNominee') as string | null
-  const isWinner = formData.get('winner') === 'on'
+  const categoryId = formData.get("category") as string;
+  const primaryNomineeId = formData.get("primaryNominee") as string;
+  const secondaryNomineeId = formData.get("secondaryNominee") as string | null;
+  const isWinner = formData.get("winner") === "on";
 
   if (!categoryId || !primaryNomineeId) {
-    throw new Error('Missing required fields')
+    throw new Error("Missing required fields");
   }
 
   await db.insert(dbtNomination).values({
     category: categoryId,
     primaryNominee: primaryNomineeId,
     secondaryNominee: secondaryNomineeId || null,
-    isWinner
-  })
-  
-  revalidatePath('/admin')
+    isWinner,
+  });
+
+  revalidatePath("/admin");
 }
 
 export default async function AdminPage() {
   const categories = await db.query.dbtCategory.findMany({
-    orderBy: (categories, { asc }) => [asc(categories.name)]
+    orderBy: (categories, { asc }) => [asc(categories.name)],
   });
 
   const movieNominees = await db.query.dbtNominee.findMany({
-    where: (nominees, { eq }) => eq(nominees.type, 'movie'),
-    orderBy: (nominees, { asc }) => [asc(nominees.name)]
+    where: (nominees, { eq }) => eq(nominees.type, "movie"),
+    orderBy: (nominees, { asc }) => [asc(nominees.name)],
   });
 
   const personNominees = await db.query.dbtNominee.findMany({
-    where: (nominees, { eq }) => eq(nominees.type, 'person'),
-    orderBy: (nominees, { asc }) => [asc(nominees.name)]
+    where: (nominees, { eq }) => eq(nominees.type, "person"),
+    orderBy: (nominees, { asc }) => [asc(nominees.name)],
   });
 
   return (
     <div className="space-y-6 p-4">
       <h1 className="text-2xl font-bold">Add Nomination</h1>
-      
+
       <form action={createNomination} className="grid gap-6">
         <div className="grid gap-2">
           <Label>Category</Label>

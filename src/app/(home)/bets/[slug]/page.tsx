@@ -2,7 +2,6 @@ import { db } from "@/server/db";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import PhArrowUp from "~icons/ph/arrow-up";
 import PhArrowDown from "~icons/ph/arrow-down";
@@ -41,8 +40,14 @@ async function getCategoryWithNavigation(slug: string) {
 
   return {
     currentCategory: categories[currentIndex],
-    prevCategory: currentIndex > 0 ? categories[currentIndex - 1] : categories[categories.length - 1],
-    nextCategory: currentIndex < categories.length - 1 ? categories[currentIndex + 1] : categories[0],
+    prevCategory:
+      currentIndex > 0
+        ? categories[currentIndex - 1]
+        : categories[categories.length - 1],
+    nextCategory:
+      currentIndex < categories.length - 1
+        ? categories[currentIndex + 1]
+        : categories[0],
     categoryPoints: points?.points,
     nominations,
   };
@@ -56,52 +61,54 @@ const BetPage = async ({ params }: { params: { slug: string } }) => {
     categoryPoints,
     nominations,
   } = await getCategoryWithNavigation(params.slug);
-  
+
   if (!currentCategory) return notFound();
 
   return (
-    <div className="flex justify-between gap-12 h-full">
+    <div className="flex h-full justify-between gap-12">
       {/* Bet section */}
       <div className="w-2/3">
         <BetSection nominations={nominations} />
       </div>
 
       {/* Navigation section */}
-      <div className="w-1/3 flex flex-col justify-center gap-4 pb-16">
-
+      <div className="flex w-1/3 flex-col justify-center gap-4 pb-16">
         {/* Back button */}
         <div className="self-end">
-          <Button variant="outline" asChild className="w-12 h-12 p-0">
+          <Button variant="outline" asChild className="h-12 w-12 p-0">
             <Link href={`/bets/${prevCategory?.slug}`}>
-              <PhArrowUp className="w-5 h-5" />
+              <PhArrowUp className="h-5 w-5" />
             </Link>
           </Button>
         </div>
-        
+
         {/* Category card */}
         <Card>
           <CardHeader>
             {categoryPoints && (
-                <span className="text-sm text-muted-foreground">({categoryPoints} points)</span>
+              <span className="text-sm text-muted-foreground">
+                ({categoryPoints} points)
+              </span>
             )}
             <CardTitle>{currentCategory.name}</CardTitle>
           </CardHeader>
 
           <CardContent>
-            <p className="text-sm text-muted-foreground">{currentCategory.description}</p>
+            <p className="text-sm text-muted-foreground">
+              {currentCategory.description}
+            </p>
           </CardContent>
         </Card>
 
         {/* Next button */}
         <div className="self-end">
-          <Button variant="outline" asChild className="w-12 h-12 p-0">
+          <Button variant="outline" asChild className="h-12 w-12 p-0">
             <Link href={`/bets/${nextCategory?.slug}`}>
-              <PhArrowDown className="w-5 h-5" />
+              <PhArrowDown className="h-5 w-5" />
             </Link>
           </Button>
         </div>
-
-      </div>  
+      </div>
     </div>
   );
 };

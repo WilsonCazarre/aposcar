@@ -18,7 +18,11 @@ export default async function LoginPage() {
         <Card>
           <CardHeader>
             <CardTitle>Aposcar</CardTitle>
-            <CardDescription>Chose a login method!<br/>(We only have one)</CardDescription>
+            <CardDescription>
+              Chose a login method!
+              <br />
+              (We only have one)
+            </CardDescription>
           </CardHeader>
 
           <CardContent>

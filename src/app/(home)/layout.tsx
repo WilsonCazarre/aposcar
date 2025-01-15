@@ -16,12 +16,12 @@ export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const session = await auth();
-  
+
   return (
-    <div className="flex flex-col items-center justify-center w-screen h-screen">
+    <div className="flex h-screen w-screen flex-col items-center justify-center">
       <Navbar />
       {/* <hr className="w-full" /> */}
-      <div className="px-12 flex-grow w-full">{children}</div>
+      <div className="w-full flex-grow px-12">{children}</div>
     </div>
   );
 }

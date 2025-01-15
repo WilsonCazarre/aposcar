@@ -22,7 +22,7 @@ const LoginButton = () => (
   </Button>
 );
 
-export const AvatarDropdown: React.FC<Props> = async ({ session }) => {  
+export const AvatarDropdown: React.FC<Props> = async ({ session }) => {
   if (!session) {
     return <LoginButton />;
   }
@@ -47,8 +47,8 @@ export const AvatarDropdown: React.FC<Props> = async ({ session }) => {
         {session.user?.role === "admin" && (
           <DropdownMenuItem asChild>
             <Link href="/admin">Admin Tools</Link>
-            </DropdownMenuItem>
-            )}
+          </DropdownMenuItem>
+        )}
 
         <DropdownMenuItem asChild>
           <form

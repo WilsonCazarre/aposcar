@@ -19,7 +19,11 @@ import {
  */
 export const createTable = pgTableCreator((name) => `aposcar_${name}`);
 
-export const dbeCategoryType = pgEnum("categoryType", ["main", "regular", "secondary",]);
+export const dbeCategoryType = pgEnum("categoryType", [
+  "main",
+  "regular",
+  "secondary",
+]);
 
 export const dbtCategoryTypesPoints = createTable("categoryTypesPoints", {
   id: uuid("id").defaultRandom().primaryKey(),
