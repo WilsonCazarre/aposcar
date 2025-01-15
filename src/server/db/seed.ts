@@ -288,35 +288,37 @@ const nominations = [
     category: categories.find((c) => c.name === "Directing")?.slug,
     movie: movies[0].slug, // Spider man 2
     receiver: receivers.find((r) => r.name === "Emma Stone")?.slug,
-    description: "Emma Stone as Gwen Stacy in",
+    description: "as Gwen Stacy in",
     isWinner: false,
   },
   {
     category: categories.find((c) => c.name === "Directing")?.slug,
     movie: movies[1].slug, // Overwatch
     receiver: receivers.find((r) => r.name === "Reinhardt")?.slug,
-    description: "Reinhardt as himself in",
+    description: "as himself in",
     isWinner: false,
   },
   {
+    // Maybe in the case of song the receiver should be the song itself?
+    // In that case the description would be "By Brian Tyler"
     category: categories.find((c) => c.name === "Directing")?.slug,
     movie: movies[2].slug, // Age of Ultron
     receiver: receivers.find((r) => r.name === "Brian Tyler")?.slug,
-    description: '"Avengers: Age of Ultron Title" by Brian Tyler',
+    description: 'for "Avengers: Age of Ultron Title"',
     isWinner: false,
   },
   {
     category: categories.find((c) => c.name === "Directing")?.slug,
     movie: movies[3].slug, // history of the world
     receiver: receivers.find((r) => r.name === "Bill Wurtz")?.slug,
-    description: "Bill Wurtz for",
+    description: "for",
     isWinner: false,
   },
   {
     category: categories.find((c) => c.name === "Directing")?.slug,
     movie: movies[4].slug, // Megamind
     receiver: receivers.find((r) => r.name === "Brad Pitt")?.slug,
-    description: "Brad Pitt as Metro Man in",
+    description: "as Metro Man in",
     isWinner: false,
   },
 ];

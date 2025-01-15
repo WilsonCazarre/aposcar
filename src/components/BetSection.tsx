@@ -43,7 +43,10 @@ export function BetSection({ nominations }: BetSectionProps) {
         {selectedNomination ? (
           <div>
             {selectedNomination.description && (
-              <p className="text-lg font-semibold">
+              <p className="text-lg">
+                <span className="font-bold">
+                  {selectedNomination.receiver?.name ? selectedNomination.receiver.name + " " : ""}
+                </span>
                 {selectedNomination.description}
               </p>
             )}
