@@ -27,7 +27,7 @@ export const dbeCategoryType = pgEnum("categoryType", [
 
 export const dbtCategoryTypesPoints = createTable("categoryTypesPoints", {
   id: uuid("id").defaultRandom().primaryKey(),
-  categoryType: dbeCategoryType("categoryType").default("regular"),
+  categoryType: dbeCategoryType("categoryType").unique(),
   points: integer("points"),
 });
 
@@ -43,45 +43,44 @@ export const categoriesRelations = relations(dbtCategory, ({ many }) => ({
   nomination: many(dbtNomination),
 }));
 
-export const dbeNomineeType = pgEnum("nomineeType", ["movie", "person"]);
-
-export const dbtNominee = createTable("nominees", {
+export const dbtMovie = createTable("movies", {
   id: uuid("id").defaultRandom().primaryKey(),
   slug: text("slug").unique(),
   name: text("name"),
   description: text("description"),
-  image: text("image"),
-  type: dbeNomineeType("type").default("movie"),
+  poster: text("image"),
   tagline: text("tagline"),
   backdrop: text("backdrop"),
   letterboxd: text("letterboxd"),
 });
 
-export const nomineeRelations = relations(dbtNominee, ({ many }) => ({
-  primaryNominee: many(dbtNomination, { relationName: "primaryNominee" }),
-  secondaryNominee: many(dbtNomination, { relationName: "secondaryNominee" }),
-}));
+export const dbtReceiver = createTable("receivers", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  slug: text("slug").unique(),
+  name: text("name"),
+  image: text("image"),
+  letterboxd: text("letterboxd"),
+});
 
 export const dbtNomination = createTable("nominations", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),
   isWinner: boolean("isWinner"),
   category: uuid("category").references(() => dbtCategory.id),
-  primaryNominee: uuid("primaryNominee")
-    .references(() => dbtNominee.id)
-    .notNull(),
-  secondaryNominee: uuid("secondaryNominee").references(() => dbtNominee.id),
+  movie: uuid("movie").references(() => dbtMovie.id),
+  receiver: uuid("receiver").references(() => dbtReceiver.id),
+  description: text("description"),
 });
 
 export const nominationRelations = relations(dbtNomination, ({ one }) => ({
-  primaryNominee: one(dbtNominee, {
-    fields: [dbtNomination.primaryNominee],
-    references: [dbtNominee.id],
-    relationName: "primaryNominee",
+  movie: one(dbtMovie, {
+    fields: [dbtNomination.movie],
+    references: [dbtMovie.id],
+    relationName: "movie",
   }),
-  secondaryNominee: one(dbtNominee, {
-    fields: [dbtNomination.secondaryNominee],
-    references: [dbtNominee.id],
-    relationName: "secondaryNominee",
+  receiver: one(dbtReceiver, {
+    fields: [dbtNomination.receiver],
+    references: [dbtReceiver.id],
+    relationName: "receiver",
   }),
   category: one(dbtCategory, {
     fields: [dbtNomination.category],

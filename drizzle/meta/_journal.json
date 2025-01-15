@@ -29,6 +29,20 @@
       "when": 1736891401272,
       "tag": "0003_glorious_avengers",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1736956622210,
+      "tag": "0004_groovy_norrin_radd",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1736956802416,
+      "tag": "0005_vengeful_red_skull",
+      "breakpoints": true
     }
   ]
 }
