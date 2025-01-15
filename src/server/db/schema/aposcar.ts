@@ -1,7 +1,7 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   boolean,
   pgEnum,
@@ -10,6 +10,7 @@ import {
   uuid,
   integer,
 } from "drizzle-orm/pg-core";
+import { users } from "./auth";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -86,4 +87,41 @@ export const nominationRelations = relations(dbtNomination, ({ one }) => ({
     fields: [dbtNomination.category],
     references: [dbtCategory.id],
   }),
+}));
+
+export const dbtVote = createTable("votes", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  user: text("user")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  nomination: uuid("nomination")
+    .notNull()
+    .references(() => dbtNomination.id, { onDelete: "cascade" }),
+  category: uuid("category").references(() => dbtCategory.id, {
+    onDelete: "cascade",
+  }),
+});
+
+export const votesConstraint = sql`
+  ALTER TABLE ${dbtVote} 
+  ADD CONSTRAINT one_vote_per_category
+  UNIQUE (user, category);`;
+
+export const voteRelations = relations(dbtVote, ({ one }) => ({
+  user: one(users, {
+    fields: [dbtVote.user],
+    references: [users.id],
+  }),
+  nomination: one(dbtNomination, {
+    fields: [dbtVote.nomination],
+    references: [dbtNomination.id],
+  }),
+  category: one(dbtCategory, {
+    fields: [dbtVote.category],
+    references: [dbtCategory.id],
+  }),
+}));
+
+export const nominationVotesRelation = relations(dbtNomination, ({ many }) => ({
+  votes: many(dbtVote),
 }));
