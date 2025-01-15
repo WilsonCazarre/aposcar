@@ -5,11 +5,10 @@ import Image from "next/image";
 
 interface BetSectionProps {
   nominations: {
-    primaryNominee: string & {
+    movie: string & {
       id: string;
-      image: string | null;
+      poster: string | null;
       name: string | null;
-      type: "movie" | "person" | null;
       slug: string | null;
       description: string | null;
       tagline: string | null;
@@ -17,21 +16,18 @@ interface BetSectionProps {
       letterboxd: string | null;
     };
     id: string;
-    secondaryNominee:
+    receiver:
       | (string & {
           id: string;
+          slug: string | null;
           image: string | null;
           name: string | null;
-          type: "movie" | "person" | null;
-          slug: string | null;
-          description: string | null;
-          tagline: string | null;
-          backdrop: string | null;
           letterboxd: string | null;
         })
       | null;
     isWinner: boolean | null;
     category: string | null;
+    description: string | null;
   }[];
 }
 
@@ -46,25 +42,25 @@ export function BetSection({ nominations }: BetSectionProps) {
       <div className="flex h-full w-2/3 flex-col justify-around">
         {selectedNomination ? (
           <div>
-            {selectedNomination.secondaryNominee && (
+            {selectedNomination.description && (
               <p className="text-lg font-semibold">
-                {selectedNomination.secondaryNominee.tagline}
+                {selectedNomination.description}
               </p>
             )}
             <h2 className="py-4 text-4xl font-bold text-primary">
-              {selectedNomination.primaryNominee.name}
+              {selectedNomination.movie.name}
             </h2>
 
             <div>
-              {selectedNomination.primaryNominee.tagline && (
+              {selectedNomination.movie.tagline && (
                 <p className="pb-2 font-semibold">
-                  {selectedNomination.primaryNominee.tagline?.toUpperCase()}
+                  {selectedNomination.movie.tagline?.toUpperCase()}
                 </p>
               )}
               <p className="text-sm text-muted-foreground">
-                {selectedNomination.primaryNominee.description?.slice(0, 480)}
-                {(selectedNomination.primaryNominee.description?.length ?? 0) >
-                  480 && "..."}
+                {selectedNomination.movie.description?.slice(0, 480)}
+                {(selectedNomination.movie.description?.length ?? 0) > 480 &&
+                  "..."}
               </p>
             </div>
           </div>
@@ -83,13 +79,11 @@ export function BetSection({ nominations }: BetSectionProps) {
           >
             <Image
               src={
-                (nomination.secondaryNominee?.image ??
-                  nomination.primaryNominee.image) ||
+                (nomination.receiver?.image ?? nomination.movie.poster) ||
                 "/images/placeholder.jpg"
               }
               alt={
-                (nomination.secondaryNominee?.name ??
-                  nomination.primaryNominee.name) ||
+                (nomination.receiver?.name ?? nomination.movie.name) ||
                 "Movie poster"
               }
               fill

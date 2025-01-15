@@ -32,10 +32,6 @@ async function getCategoryWithNavigation(slug: string) {
 
   const nominations = await db.query.dbtNomination.findMany({
     where: (nomination, { eq }) => eq(nomination.category, current?.id || ""),
-    with: {
-      primaryNominee: true,
-      secondaryNominee: true,
-    },
   });
 
   return {
