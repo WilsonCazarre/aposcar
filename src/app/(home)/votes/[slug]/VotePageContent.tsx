@@ -7,10 +7,10 @@ import PhArrowRight from "~icons/ph/arrow-right";
 import type { Category } from "@/types/categories";
 import type { Nomination } from "@/types/nominations";
 import { useState } from "react";
-import { CategoriesList } from "@/app/(home)/votes/CategoriesList";
-import { CategoryCard } from "@/app/(home)/votes/CategoryCard";
 import { MovieInfo } from "@/components/votes/MovieInfo";
 import { MovieSelector } from "@/components/votes/MovieSelector";
+import { CategoriesList } from "@/components/votes/CategoriesList";
+import { CategoryCard } from "@/components/votes/CategoryCard";
 
 interface VotePageProps {
   currentCategory: Category;

@@ -15,13 +15,15 @@ export function CategoriesList({ categories }: { categories: Category[] }) {
           style={{ maxHeight: "calc(100vh - 24rem)" }}
         >
           {categories.map((category) => (
-            <Link
-              key={category.id}
-              href={`/votes/${category.slug}`}
-              className="w-full border border-secondary px-4 py-2 hover:bg-secondary"
-            >
-              {category.name}
-            </Link>
+            <div className="flex w-full flex-col" key={category.id}>
+              <Link
+                key={category.id}
+                href={`/votes/${category.slug}`}
+                className="border border-secondary px-4 py-2 hover:bg-secondary"
+              >
+                {category.name}
+              </Link>
+            </div>
           ))}
         </ScrollArea>
       </CardContent>
