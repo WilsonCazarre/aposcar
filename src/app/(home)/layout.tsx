@@ -22,6 +22,15 @@ export default async function RootLayout({
       <Navbar />
       {/* <hr className="w-full" /> */}
       <div className="w-full flex-grow px-12">{children}</div>
+
+      <footer className="w-full py-4 text-center text-sm">
+        <p>
+          Made with 💛 by{" "}
+          <a href="labquatro.com.br" target="_blank" rel="noopener noreferrer">
+            LabQuatro
+          </a>
+        </p>
+      </footer>
     </div>
   );
 }
