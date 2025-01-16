@@ -20,15 +20,16 @@ export default async function Home() {
             <Link
               key={user.id}
               href={`/users/${user.id}`}
-              className={
-                `flex w-full items-center gap-4 rounded-md border px-4 py-2 hover:bg-secondary ` +
-                (user.email === session?.user.email
-                  ? "border-primary"
-                  : "border-secondary")
-              }
+              className="flex w-full items-center gap-4 rounded-md border border-secondary p-4 hover:bg-secondary"
             >
               <div className="text-xl font-bold">1º</div>
-              <Avatar>
+              <Avatar
+                className={
+                  user.email === session?.user.email
+                    ? "border-2 border-primary"
+                    : ""
+                }
+              >
                 <AvatarImage src={user.image ?? ""} />
                 <AvatarFallback>
                   {user.name?.[0]?.toUpperCase() ?? "@"}
@@ -37,7 +38,7 @@ export default async function Home() {
 
               <div className="flex w-full flex-col gap-2">
                 <p className="font-sm">{user.name}</p>
-                <Progress value={69} max={100} className="h-1" />
+                <Progress value={69} max={100} className="h-2" />
               </div>
             </Link>
           ))}

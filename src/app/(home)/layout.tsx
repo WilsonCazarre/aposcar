@@ -23,10 +23,15 @@ export default async function RootLayout({
       {/* <hr className="w-full" /> */}
       <div className="w-full flex-grow px-12">{children}</div>
 
-      <footer className="w-full py-4 text-center text-sm">
+      <footer className="w-full py-4 text-center text-sm text-muted-foreground">
         <p>
           Made with 💛 by{" "}
-          <a href="labquatro.com.br" target="_blank" rel="noopener noreferrer">
+          <a
+            href="https://www.labquatro.com.br"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
             LabQuatro
           </a>
         </p>
