@@ -255,72 +255,97 @@ const receivers = [
   },
 ];
 
-const nominations = [
-  // Best Picture nominations
+const specialCategories = [
   {
-    category: categories.find((c) => c.name === "Best Picture")?.slug,
-    movie: movies[0].slug, // Spider-Man 2
-    isWinner: false,
+    name: "Actor In A Leading Role",
+    descriptions: {
+      "Brad Pitt": "as Metro Man in",
+      "Bill Wurtz": "as The Narrator in",
+      "Emma Stone": "as MegaWoman in",
+      Reinhardt: "as The Hero in",
+      "Brian Tyler": "as Background Actor in",
+    },
   },
   {
-    category: categories.find((c) => c.name === "Best Picture")?.slug,
-    movie: movies[1].slug, // Overwatch
-    isWinner: false,
+    name: "Actor In A Supporting Role",
+    descriptions: {
+      "Brad Pitt": "as Sidekick in",
+      "Bill Wurtz": "as Supporting Character in",
+      "Emma Stone": "as Side Character in",
+      Reinhardt: "as Knight in",
+      "Brian Tyler": "as Extra in",
+    },
   },
   {
-    category: categories.find((c) => c.name === "Best Picture")?.slug,
-    movie: movies[2].slug, // Age of Ultron
-    isWinner: false,
+    name: "Actress In A Leading Role",
+    descriptions: {
+      "Brad Pitt": "as Lady Justice in",
+      "Bill Wurtz": "as Leading Lady in",
+      "Emma Stone": "as Gwen Stacy in",
+      Reinhardt: "as Shield Maiden in",
+      "Brian Tyler": "as Prima Donna in",
+    },
   },
   {
-    category: categories.find((c) => c.name === "Best Picture")?.slug,
-    movie: movies[3].slug, // history of the world
-    isWinner: false,
+    name: "Actress In A Supporting Role",
+    descriptions: {
+      "Brad Pitt": "as Supporting Actress in",
+      "Bill Wurtz": "as Background Singer in",
+      "Emma Stone": "as Supporting Role in",
+      Reinhardt: "as Supporting Knight in",
+      "Brian Tyler": "as Supporting Character in",
+    },
   },
   {
-    category: categories.find((c) => c.name === "Best Picture")?.slug,
-    movie: movies[4].slug, // Megamind
-    isWinner: false,
+    name: "Directing",
+    descriptions: {
+      "Brad Pitt": "for",
+      "Bill Wurtz": "for",
+      "Emma Stone": "for",
+      Reinhardt: "for",
+      "Brian Tyler": "for",
+    },
   },
+  {
+    name: "Music (Original Song)",
+    descriptions: {
+      "Brad Pitt": 'for "Metro City Blues" in',
+      "Bill Wurtz": 'for "The Sun is a Deadly Laser" in',
+      "Emma Stone": 'for "Spider Love" in',
+      Reinhardt: 'for "Honor and Glory" in',
+      "Brian Tyler": 'for "Avengers Main Theme" in',
+    },
+  },
+];
 
-  // Directing nominations
-  {
-    category: categories.find((c) => c.name === "Directing")?.slug,
-    movie: movies[0].slug, // Spider man 2
-    receiver: receivers.find((r) => r.name === "Emma Stone")?.slug,
-    description: "as Gwen Stacy in",
-    isWinner: false,
-  },
-  {
-    category: categories.find((c) => c.name === "Directing")?.slug,
-    movie: movies[1].slug, // Overwatch
-    receiver: receivers.find((r) => r.name === "Reinhardt")?.slug,
-    description: "as himself in",
-    isWinner: false,
-  },
-  {
-    // Maybe in the case of song the receiver should be the song itself?
-    // In that case the description would be "By Brian Tyler"
-    category: categories.find((c) => c.name === "Directing")?.slug,
-    movie: movies[2].slug, // Age of Ultron
-    receiver: receivers.find((r) => r.name === "Brian Tyler")?.slug,
-    description: 'for "Avengers: Age of Ultron Title"',
-    isWinner: false,
-  },
-  {
-    category: categories.find((c) => c.name === "Directing")?.slug,
-    movie: movies[3].slug, // history of the world
-    receiver: receivers.find((r) => r.name === "Bill Wurtz")?.slug,
-    description: "for",
-    isWinner: false,
-  },
-  {
-    category: categories.find((c) => c.name === "Directing")?.slug,
-    movie: movies[4].slug, // Megamind
-    receiver: receivers.find((r) => r.name === "Brad Pitt")?.slug,
-    description: "as Metro Man in",
-    isWinner: false,
-  },
+const receiverMovieAssignments = {
+  "Brad Pitt": "TEST-megamind",
+  "Bill Wurtz": "TEST-history-of-the-entire-world-i-guess",
+  "Emma Stone": "TEST-the-amazing-spider-man-2",
+  Reinhardt: "TEST-overwatch-honor-and-glory",
+  "Brian Tyler": "TEST-avengers-age-of-ultron",
+};
+
+const nominations = [
+  // Special categories with all receivers
+  ...specialCategories.flatMap((category) =>
+    receivers.map((receiver) => ({
+      category: categories.find((c) => c.name === category.name)?.slug,
+      movie: receiverMovieAssignments[receiver.name],
+      receiver: receiver.slug,
+      description: category.descriptions[receiver.name],
+    })),
+  ),
+
+  // Remaining categories with all movies
+  ...categories
+    .filter((c) => !specialCategories.map((sc) => sc.name).includes(c.name))
+    .flatMap((category) =>
+      movies.map((movie) => ({
+        category: category.slug,
+        movie: movie.slug,
+      })),
+    ),
 ];
 
 void (async () => {
@@ -353,13 +378,12 @@ void (async () => {
   const dbReceivers = await db.select().from(dbtReceiver);
 
   const nominationsWithIds = nominations.map((nom) => {
+
     const categoryId = dbCategories.find((c) => c.slug === nom.category)?.id;
     const movieId = dbMovies.find((m) => m.slug === nom.movie)?.id;
     const receiverId = dbReceivers.find((r) => r.slug === nom.receiver)?.id;
 
     return {
-      id: crypto.randomUUID(),
-      isWinner: nom.isWinner,
       category: categoryId,
       movie: movieId,
       receiver: receiverId,

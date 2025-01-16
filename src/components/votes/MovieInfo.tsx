@@ -12,7 +12,7 @@ export function MovieInfo({ nomination }: MovieInfoProps) {
   }
 
   return (
-    <div className="text-end">
+    <div>
       <div className="py-4">
         {nomination.description ? (
           <p className="text-lg">

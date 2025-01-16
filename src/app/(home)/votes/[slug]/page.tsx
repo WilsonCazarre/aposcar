@@ -1,11 +1,7 @@
 import { db } from "@/server/db";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import PhArrowLeft from "~icons/ph/arrow-left";
-import PhArrowRight from "~icons/ph/arrow-right";
-import { BetSection } from "@/components/BetSection";
+import { Suspense } from "react";
+import { VotePageContent } from "./VotePageContent";
 
 export const dynamicParams = false;
 
@@ -50,65 +46,19 @@ async function getCategoryWithNavigation(slug: string) {
         : categories[0],
     categoryPoints: points?.points,
     nominations,
+    categories,
   };
 }
 
 const VotePage = async ({ params }: { params: { slug: string } }) => {
-  const {
-    currentCategory,
-    prevCategory,
-    nextCategory,
-    categoryPoints,
-    nominations,
-  } = await getCategoryWithNavigation(params.slug);
+  const data = await getCategoryWithNavigation(params.slug);
 
-  if (!currentCategory) return notFound();
+  if (!data.currentCategory) return notFound();
 
   return (
-    <div className="flex h-full justify-between gap-12">
-      {/* Navigation section */}
-      <div className="flex w-1/3 flex-col justify-center gap-4 pb-16">
-        {/* Navigation Buttons */}
-        <div className="flex justify-between">
-          <Button variant="outline" asChild className="h-12 w-12 p-0">
-            <Link href={`/votes/${prevCategory?.slug}`}>
-              <PhArrowLeft className="h-5 w-5" />
-            </Link>
-          </Button>
-
-          <Button variant="outline" asChild className="h-12">
-            <div>See all</div>
-          </Button>
-
-          <Button variant="outline" asChild className="h-12 w-12 p-0">
-            <Link href={`/votes/${nextCategory?.slug}`}>
-              <PhArrowRight className="h-5 w-5" />
-            </Link>
-          </Button>
-        </div>
-
-        {/* Category information */}
-        <Card>
-          <CardHeader>
-            {categoryPoints && (
-              <span className="text-sm text-muted-foreground">
-                ({categoryPoints} points)
-              </span>
-            )}
-            <CardTitle>{currentCategory.name}</CardTitle>
-
-            <p className="pt-2 text-sm text-muted-foreground">
-              {currentCategory.description}
-            </p>
-          </CardHeader>
-        </Card>
-      </div>
-
-      {/* Bet section */}
-      <div className="w-2/3">
-        <BetSection nominations={nominations} />
-      </div>
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <VotePageContent {...data} />
+    </Suspense>
   );
 };
 
