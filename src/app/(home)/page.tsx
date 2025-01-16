@@ -13,6 +13,7 @@ export default async function Home() {
         <CardHeader>
           <CardTitle>Users</CardTitle>
         </CardHeader>
+        
         <CardContent>
           <div className="space-y-4">
             {allUsers.map((user) => (

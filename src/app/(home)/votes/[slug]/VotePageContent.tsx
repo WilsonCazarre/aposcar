@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import PhArrowLeft from "~icons/ph/arrow-left";
 import PhArrowRight from "~icons/ph/arrow-right";
-import { BetSection } from "@/components/BetSection";
 import type { Category } from "@/types/categories";
 import type { Nomination } from "@/types/nominations";
 import { useState } from "react";
@@ -17,7 +16,7 @@ interface VotePageProps {
   currentCategory: Category;
   prevCategory: Category;
   nextCategory: Category;
-  categoryPoints: number | undefined;
+  categoryPoints: number | undefined | null;
   nominations: Nomination[];
   categories: Category[];
 }

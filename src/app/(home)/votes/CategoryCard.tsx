@@ -7,7 +7,7 @@ export function CategoryCard({
 }: {
   name: string;
   description: string | null;
-  points?: number;
+  points?: number | undefined | null;
 }) {
   return (
     <Card>
