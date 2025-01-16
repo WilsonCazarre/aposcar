@@ -3,8 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import PhArrowUp from "~icons/ph/arrow-up";
-import PhArrowDown from "~icons/ph/arrow-down";
+import PhArrowLeft from "~icons/ph/arrow-left";
+import PhArrowRight from "~icons/ph/arrow-right";
 import { BetSection } from "@/components/BetSection";
 
 export const dynamicParams = false;
@@ -66,23 +66,28 @@ const VotePage = async ({ params }: { params: { slug: string } }) => {
 
   return (
     <div className="flex h-full justify-between gap-12">
-      {/* Bet section */}
-      <div className="w-2/3">
-        <BetSection nominations={nominations} />
-      </div>
-
       {/* Navigation section */}
       <div className="flex w-1/3 flex-col justify-center gap-4 pb-16">
-        {/* Back button */}
-        <div className="self-end">
+        {/* Navigation Buttons */}
+        <div className="flex justify-between">
           <Button variant="outline" asChild className="h-12 w-12 p-0">
             <Link href={`/votes/${prevCategory?.slug}`}>
-              <PhArrowUp className="h-5 w-5" />
+              <PhArrowLeft className="h-5 w-5" />
+            </Link>
+          </Button>
+
+          <Button variant="outline" asChild className="h-12">
+            <div>See all</div>
+          </Button>
+
+          <Button variant="outline" asChild className="h-12 w-12 p-0">
+            <Link href={`/votes/${nextCategory?.slug}`}>
+              <PhArrowRight className="h-5 w-5" />
             </Link>
           </Button>
         </div>
 
-        {/* Category card */}
+        {/* Category information */}
         <Card>
           <CardHeader>
             {categoryPoints && (
@@ -91,23 +96,17 @@ const VotePage = async ({ params }: { params: { slug: string } }) => {
               </span>
             )}
             <CardTitle>{currentCategory.name}</CardTitle>
-          </CardHeader>
 
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
+            <p className="pt-2 text-sm text-muted-foreground">
               {currentCategory.description}
             </p>
-          </CardContent>
+          </CardHeader>
         </Card>
+      </div>
 
-        {/* Next button */}
-        <div className="self-end">
-          <Button variant="outline" asChild className="h-12 w-12 p-0">
-            <Link href={`/votes/${nextCategory?.slug}`}>
-              <PhArrowDown className="h-5 w-5" />
-            </Link>
-          </Button>
-        </div>
+      {/* Bet section */}
+      <div className="w-2/3">
+        <BetSection nominations={nominations} />
       </div>
     </div>
   );

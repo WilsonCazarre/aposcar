@@ -3,12 +3,8 @@ import postgres from "postgres";
 
 import { env } from "@/env";
 import * as aposcarSchema from "./schema/aposcar";
-// import * as authSchema from "./schema/auth";
+import * as authSchema from "./schema/auth";
 
-/**
- * Cache the database connection in development. This avoids creating a new connection on every HMR
- * update.
- */
 const globalForDb = globalThis as unknown as {
   conn: postgres.Sql | undefined;
 };
@@ -16,6 +12,7 @@ const globalForDb = globalThis as unknown as {
 const conn = globalForDb.conn ?? postgres(env.DATABASE_URL);
 if (env.NODE_ENV !== "production") globalForDb.conn = conn;
 
-export const db = drizzle(conn, {
-  schema: aposcarSchema,
-});
+// Merge schemas
+const schema = { ...aposcarSchema, ...authSchema };
+
+export const db = drizzle(conn, { schema });

@@ -34,10 +34,10 @@ export const dbtCategoryTypesPoints = createTable("categoryTypesPoints", {
 
 export const dbtCategory = createTable("categories", {
   id: uuid("id").defaultRandom().primaryKey(),
-  slug: text("slug").unique(),
-  name: text("name"),
+  slug: text("slug").unique().notNull(),
+  name: text("name").notNull(),
   description: text("description"),
-  type: dbeCategoryType("type").default("regular"),
+  type: dbeCategoryType("type").default("regular").notNull(),
 });
 
 export const categoriesRelations = relations(dbtCategory, ({ many }) => ({
@@ -65,9 +65,13 @@ export const dbtReceiver = createTable("receivers", {
 
 export const dbtNomination = createTable("nominations", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),
-  isWinner: boolean("isWinner"),
-  category: uuid("category").references(() => dbtCategory.id),
-  movie: uuid("movie").references(() => dbtMovie.id),
+  isWinner: boolean("isWinner").default(false).notNull(),
+  category: uuid("category")
+    .references(() => dbtCategory.id)
+    .notNull(),
+  movie: uuid("movie")
+    .references(() => dbtMovie.id)
+    .notNull(),
   receiver: uuid("receiver").references(() => dbtReceiver.id),
   description: text("description"),
 });

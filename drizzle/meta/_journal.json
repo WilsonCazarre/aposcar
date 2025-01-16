@@ -57,6 +57,13 @@
       "when": 1736965763052,
       "tag": "0007_shiny_calypso",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1737038586909,
+      "tag": "0008_friendly_madame_web",
+      "breakpoints": true
     }
   ]
 }

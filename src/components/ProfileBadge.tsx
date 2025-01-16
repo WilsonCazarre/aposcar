@@ -31,7 +31,7 @@ export const AvatarDropdown: React.FC<Props> = async ({ session }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="space-x-2">
+        <Button variant="ghost" className="space-x-2 py-4">
           <div>{session.user?.name}</div>
           <Avatar>
             <AvatarImage src={session.user?.image ?? ""} />

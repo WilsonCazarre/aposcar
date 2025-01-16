@@ -360,9 +360,9 @@ void (async () => {
     return {
       id: crypto.randomUUID(),
       isWinner: nom.isWinner,
-      category: categoryId, // Changed from category_id
-      movie: movieId, // Changed from movie_id
-      receiver: receiverId, // Changed from receiver_id
+      category: categoryId,
+      movie: movieId,
+      receiver: receiverId,
       description: nom.description,
     };
   });
