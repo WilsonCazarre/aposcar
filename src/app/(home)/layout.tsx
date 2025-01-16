@@ -30,7 +30,7 @@ export default async function RootLayout({
             href="https://www.labquatro.com.br"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-primary"
+            className="text-primary hover:text-foreground"
           >
             LabQuatro
           </a>

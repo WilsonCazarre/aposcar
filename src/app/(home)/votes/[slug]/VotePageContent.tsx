@@ -71,7 +71,7 @@ export function VotePageContent({
 
       <div className="w-2/3">
         <div className="flex h-full flex-col justify-between">
-          <div className="flex h-full w-2/3 flex-col justify-around self-end text-end">
+          <div className="flex h-full w-2/3 flex-col justify-around self-end text-end pb-8">
             <MovieInfo nomination={selectedNomination} />
           </div>
           <MovieSelector

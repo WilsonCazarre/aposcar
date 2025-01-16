@@ -13,7 +13,7 @@ export function MovieSelector({
   onSelect,
 }: MovieSelectorProps) {
   return (
-    <div className="flex gap-4 pb-12">
+    <div className="flex gap-4 pb-10">
       {nominations.map((nomination) => (
         <div
           key={nomination.id}
