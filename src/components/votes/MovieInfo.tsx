@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { type Nomination } from "@/types/nominations";
 import Link from "next/link";
+import PhArrowUpRight from "~icons/ph/arrow-up-right";
 
 interface MovieInfoProps {
   nomination: Nomination | null;
@@ -55,17 +56,21 @@ export function MovieInfo({ nomination }: MovieInfoProps) {
             {nomination.movie.tagline.toUpperCase()}
           </p>
         )}
-        <p className="text-sm text-muted-foreground pb-2">
+        <p className="pb-2 text-sm text-muted-foreground">
           {nomination.movie.description?.slice(0, 360)}
           {(nomination.movie.description?.length ?? 0) > 360 && "..."}
         </p>
 
         {nomination.movie.letterboxd && (
-            <Badge variant="outline" className="mt-2">
-          <Link href={nomination.movie.letterboxd} target="_blank">
-              Letterboxd
-          </Link>
-            </Badge>
+          <Badge variant="outline" className="mt-2 hover:text-primary">
+            <Link
+              href={nomination.movie.letterboxd}
+              target="_blank"
+              className="flex items-center gap-1 p-1"
+            >
+              Letterboxd <PhArrowUpRight className="h-4 w-4" />
+            </Link>
+          </Badge>
         )}
       </div>
     </div>

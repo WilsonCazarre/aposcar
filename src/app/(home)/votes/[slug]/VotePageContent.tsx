@@ -44,11 +44,11 @@ export function VotePageContent({
           </Button>
 
           <Button
-            variant="outline"
+            variant={showAllCategories ? "secondary" : "outline"}
             className="h-12"
             onClick={() => setShowAllCategories(!showAllCategories)}
           >
-            {showAllCategories ? "Show details" : "See all"}
+            See all
           </Button>
 
           <Button variant="outline" asChild className="h-12 w-12 p-0">
@@ -71,7 +71,7 @@ export function VotePageContent({
 
       <div className="w-2/3">
         <div className="flex h-full flex-col justify-between">
-          <div className="flex h-full w-2/3 flex-col justify-around self-end text-end pb-8">
+          <div className="flex h-full w-2/3 flex-col justify-around self-end pb-8 text-end">
             <MovieInfo nomination={selectedNomination} />
           </div>
           <MovieSelector
