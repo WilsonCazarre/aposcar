@@ -12,6 +12,7 @@ import { AvatarImage } from "@radix-ui/react-avatar";
 import PhSignOut from "~icons/ph/sign-out";
 import { type Session } from "next-auth";
 import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
 
 interface Props {
   session: Session | null;
@@ -31,8 +32,15 @@ export const AvatarDropdown: React.FC<Props> = async ({ session }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="space-x-2 p-0">
-          <div>{session.user?.name}</div>
+        <Button variant="ghost" className="space-x-2">
+          <div className="flex flex-col">
+            <div>{session.user?.name}</div>
+            {session.user.role === "admin" && (
+              <Badge variant="default" className="ml-auto">
+                Admin
+              </Badge>
+            )}
+          </div>
           <Avatar>
             <AvatarImage src={session.user?.image ?? ""} />
             <AvatarFallback />

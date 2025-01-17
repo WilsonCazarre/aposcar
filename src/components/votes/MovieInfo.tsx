@@ -18,7 +18,7 @@ export function MovieInfo({ nomination }: MovieInfoProps) {
     );
   }
 
-  const description = nomination.movie.description || "";
+  const description = nomination.movie.description ?? "";
   const truncatedDescription = description.slice(0, 180);
 
   return (
