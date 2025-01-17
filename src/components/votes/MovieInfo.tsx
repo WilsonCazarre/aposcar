@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { CastVoteButton } from "@/components/votes/CastVoteButton";
 import { type Nomination } from "@/types/nominations";
@@ -11,19 +11,32 @@ interface MovieInfoProps {
 
 export function MovieInfo({ nomination }: MovieInfoProps) {
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [charLimit, setCharLimit] = useState(180);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setCharLimit(window.innerWidth >= 1024 ? 220 : 180);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   if (!nomination) {
     return (
-      <h2 className="py-4 text-2xl text-foreground">Vote on a nominee!</h2>
+      <h2 className="py-4 text-2xl text-foreground">What's your vote?</h2>
     );
   }
 
   const description = nomination.movie.description ?? "";
-  const truncatedDescription = description.slice(0, 180);
+  const truncatedDescription = description.slice(0, charLimit);
 
   return (
     <div>
+      {/* Cabeçalho */}
       <div className="pb-4">
+        {/* Pré título (Your vote is... / Descrição da nomination) */}
         {nomination.description ? (
           <p className="text-sm lg:text-lg">
             {nomination.receiver?.letterboxd ? (
@@ -52,20 +65,25 @@ export function MovieInfo({ nomination }: MovieInfoProps) {
           <p className="text-sm lg:text-lg">Your vote is...</p>
         )}
 
+        {/* Título do filme */}
         <h2 className="text-xl font-bold text-primary lg:text-3xl">
           {nomination.movie.name}
         </h2>
       </div>
 
+      {/* Corpo */}
       <div>
+        {/* Tagline */}
         {nomination.movie.tagline && (
           <p className="pb-2 text-sm font-bold">
             {nomination.movie.tagline.toUpperCase()}
           </p>
         )}
+
+        {/* Descrição */}
         <p className="pb-2 text-sm text-muted-foreground">
           {showFullDescription ? description : truncatedDescription}
-          {description.length > 180 && (
+          {description.length > charLimit && (
             <span
               onClick={() => setShowFullDescription(!showFullDescription)}
               className="cursor-pointer text-foreground hover:text-primary"
@@ -74,10 +92,14 @@ export function MovieInfo({ nomination }: MovieInfoProps) {
             </span>
           )}
         </p>
+      </div>
 
-        <div className="flex gap-2">
+      {/* Ações */}
+      <div className="flex w-full items-start justify-between">
+        {/* Links */}
+        <div>
           {nomination.movie.letterboxd && (
-            <Badge variant="outline" className="mt-2 hover:text-primary">
+            <Badge variant="outline" className="hover:text-primary">
               <Link
                 href={nomination.movie.letterboxd}
                 target="_blank"
@@ -88,7 +110,12 @@ export function MovieInfo({ nomination }: MovieInfoProps) {
             </Badge>
           )}
         </div>
-        <CastVoteButton nominationId={nomination.id} categoryId={nomination.category}/>
+
+        {/* Confirmação de voto */}
+        <CastVoteButton
+          nominationId={nomination.id}
+          categoryId={nomination.category}
+        />
       </div>
     </div>
   );

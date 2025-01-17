@@ -12,6 +12,7 @@ import { MovieSelector } from "@/components/votes/MovieSelector";
 import { CategoriesList } from "@/components/votes/CategoriesList";
 import { CategoryCard } from "@/components/votes/CategoryCard";
 import { api } from "@/trpc/react";
+import Image from "next/image";
 
 interface VotePageProps {
   currentCategory: Category;
@@ -34,37 +35,39 @@ export function VotePageContent({
     useState<Nomination | null>(null);
 
   return (
-    <div className="flex h-full flex-col lg:flex-row lg:gap-16">
-      <div className="flex flex-col justify-center gap-4 pb-4 lg:w-1/2 lg:pb-16">
-        <div className="flex justify-between">
-          <Button
-            variant="outline"
-            asChild
-            className="h-8 w-8 p-0 lg:h-12 lg:w-12"
-          >
-            <Link href={`/votes/${prevCategory?.slug}`}>
-              <PhArrowLeft className="h-4 w-4 lg:h-5 lg:w-5" />
-            </Link>
-          </Button>
+    <div className="flex h-full flex-col pb-8 lg:flex-row lg:gap-16 lg:pb-0">
+      <div className="flex flex-col gap-4 pb-4 lg:h-full lg:w-1/2 lg:justify-between lg:p-0">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-1 justify-between">
+            <Button
+              variant="outline"
+              asChild
+              className="h-8 w-8 p-0 lg:h-12 lg:w-12"
+            >
+              <Link href={`/votes/${prevCategory?.slug}`}>
+                <PhArrowLeft className="h-4 w-4 lg:h-5 lg:w-5" />
+              </Link>
+            </Button>
 
-          <CategoriesList categories={categories} />
+            <CategoriesList categories={categories} />
 
-          <Button
-            variant="outline"
-            asChild
-            className="h-8 w-8 p-0 lg:h-12 lg:w-12"
-          >
-            <Link href={`/votes/${nextCategory?.slug}`}>
-              <PhArrowRight className="h-4 w-4 lg:h-5 lg:w-5" />
-            </Link>
-          </Button>
+            <Button
+              variant="outline"
+              asChild
+              className="h-8 w-8 p-0 lg:h-12 lg:w-12"
+            >
+              <Link href={`/votes/${nextCategory?.slug}`}>
+                <PhArrowRight className="h-4 w-4 lg:h-5 lg:w-5" />
+              </Link>
+            </Button>
+          </div>
+
+          <CategoryCard
+            name={currentCategory.name}
+            description={currentCategory.description}
+            points={categoryPoints}
+          />
         </div>
-
-        <CategoryCard
-          name={currentCategory.name}
-          description={currentCategory.description}
-          points={categoryPoints}
-        />
 
         <MovieSelector
           nominations={nominations}
@@ -74,7 +77,20 @@ export function VotePageContent({
       </div>
 
       <div className="lg:w-1/2">
-        <div className="pt-4 lg:h-full lg:w-3/4 lg:pb-8 lg:pt-0">
+        <div className="hidden lg:block fixed right-0 top-0 aspect-[16/9] w-1/2">
+          {selectedNomination?.movie.backdrop && (
+            <Image
+              src={selectedNomination.movie.backdrop}
+              alt="Movie backdrop"
+              fill
+              className="object-cover"
+            />
+          )}
+          <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-b from-transparent to-background" />
+          <div className="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-l from-transparent to-background" />
+        </div>
+
+        <div className="lg:relative lg:z-10 lg:[&>*]:pt-[calc(100%*6/16)]">
           <MovieInfo nomination={selectedNomination} />
         </div>
       </div>

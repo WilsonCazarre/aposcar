@@ -32,7 +32,7 @@ export const AvatarDropdown: React.FC<Props> = async ({ session }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="space-x-2">
+        <Button variant="ghost" className="space-x-2 hover:bg-transparent">
           <div className="flex flex-col">
             <div>{session.user?.name}</div>
             {session.user.role === "admin" && (

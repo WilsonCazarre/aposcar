@@ -18,16 +18,17 @@ export function CategoriesList({ categories }: { categories: Category[] }) {
           See all
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+
+      <DialogContent className="sm:max-w-[425px] ">
         <DialogHeader>
           <DialogTitle>All Categories</DialogTitle>
         </DialogHeader>
         <ScrollArea
           className="flex flex-col gap-2 rounded-md border"
-          style={{ maxHeight: "calc(100vh - 24rem)" }}
+          style={{ maxHeight: "calc(100vh - 14rem)" }}
         >
           {categories.map((category) => (
-            <div className="flex w-full flex-col" key={category.id}>
+            <div className="flex flex-col" key={category.id}>
               <Link
                 key={category.id}
                 href={`/votes/${category.slug}`}
