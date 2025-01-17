@@ -30,58 +30,54 @@ export function VotePageContent({
   nominations,
   categories,
 }: VotePageProps) {
-  const [showAllCategories, setShowAllCategories] = useState(false);
   const [selectedNomination, setSelectedNomination] =
     useState<Nomination | null>(null);
 
   const { data } = api.votes.getVotes.useQuery();
 
   return (
-    <div className="flex h-full justify-between gap-12">
-      <div className="flex w-1/3 flex-col justify-center gap-4 pb-16">
+    <div className="flex h-full flex-col lg:flex-row lg:gap-16">
+      <div className="flex flex-col justify-center gap-4 pb-4 lg:w-1/2 lg:pb-16">
         <div className="flex justify-between">
-          <Button variant="outline" asChild className="h-12 w-12 p-0">
+          <Button
+            variant="outline"
+            asChild
+            className="h-8 w-8 p-0 lg:h-12 lg:w-12"
+          >
             <Link href={`/votes/${prevCategory?.slug}`}>
-              <PhArrowLeft className="h-5 w-5" />
+              <PhArrowLeft className="h-4 w-4 lg:h-5 lg:w-5" />
             </Link>
           </Button>
 
-          <Button
-            variant={showAllCategories ? "secondary" : "outline"}
-            className="h-12"
-            onClick={() => setShowAllCategories(!showAllCategories)}
-          >
-            See all
-          </Button>
+          <CategoriesList categories={categories} />
 
-          <Button variant="outline" asChild className="h-12 w-12 p-0">
+          <Button
+            variant="outline"
+            asChild
+            className="h-8 w-8 p-0 lg:h-12 lg:w-12"
+          >
             <Link href={`/votes/${nextCategory?.slug}`}>
-              <PhArrowRight className="h-5 w-5" />
+              <PhArrowRight className="h-4 w-4 lg:h-5 lg:w-5" />
             </Link>
           </Button>
         </div>
 
-        {showAllCategories ? (
-          <CategoriesList categories={categories} />
-        ) : (
-          <CategoryCard
-            name={currentCategory.name}
-            description={currentCategory.description}
-            points={categoryPoints}
-          />
-        )}
+        <CategoryCard
+          name={currentCategory.name}
+          description={currentCategory.description}
+          points={categoryPoints}
+        />
+
+        <MovieSelector
+          nominations={nominations}
+          selectedId={selectedNomination?.id ?? null}
+          onSelect={setSelectedNomination}
+        />
       </div>
 
-      <div className="w-2/3">
-        <div className="flex h-full flex-col justify-between">
-          <div className="flex h-full w-2/3 flex-col justify-around self-end pb-8 text-end">
-            <MovieInfo nomination={selectedNomination} />
-          </div>
-          <MovieSelector
-            nominations={nominations}
-            selectedId={selectedNomination?.id ?? null}
-            onSelect={setSelectedNomination}
-          />
+      <div className="lg:w-1/2">
+        <div className="pt-4 lg:h-full lg:w-3/4 lg:pb-8 lg:pt-0">
+          <MovieInfo nomination={selectedNomination} />
         </div>
       </div>
     </div>

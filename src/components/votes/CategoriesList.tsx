@@ -1,15 +1,27 @@
-import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Category } from "@/types/categories";
 import Link from "next/link";
 
 export function CategoriesList({ categories }: { categories: Category[] }) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>All Categories</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline" className="h-8 text-xs lg:h-12 lg:text-base">
+          See all
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>All Categories</DialogTitle>
+        </DialogHeader>
         <ScrollArea
           className="flex flex-col gap-2 rounded-md border"
           style={{ maxHeight: "calc(100vh - 24rem)" }}
@@ -26,7 +38,7 @@ export function CategoriesList({ categories }: { categories: Category[] }) {
             </div>
           ))}
         </ScrollArea>
-      </CardContent>
-    </Card>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -1,5 +1,7 @@
+import React from "react";
 import Image from "next/image";
 import { type Nomination } from "@/types/nominations";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 interface MovieSelectorProps {
   nominations: Nomination[];
@@ -13,18 +15,11 @@ export function MovieSelector({
   onSelect,
 }: MovieSelectorProps) {
   return (
-    <div className="flex gap-4 pb-10">
-      {nominations.map((nomination) => (
-        <div
-          key={nomination.id}
-          className={`relative aspect-[2/3] flex-1 cursor-pointer rounded-md ${
-            selectedId === nomination.id
-              ? "outline outline-primary"
-              : "hover:outline hover:outline-foreground"
-          }`}
-          onClick={() => onSelect(nomination)}
-        >
+    <ScrollArea className="w-full whitespace-nowrap">
+      <div className="flex flex-row gap-4 p-2">
+        {nominations.map((nomination) => (
           <Image
+            key={nomination.id}
             src={
               (nomination.receiver?.image ?? nomination.movie.poster) ||
               "/images/placeholder.jpg"
@@ -33,11 +28,18 @@ export function MovieSelector({
               (nomination.receiver?.name ?? nomination.movie.name) ||
               "Movie poster"
             }
-            fill
-            className="rounded-md object-cover"
+            width={120}
+            height={180}
+            className={`cursor-pointer rounded-md object-cover ${
+              selectedId === nomination.id
+                ? "outline outline-primary"
+                : "hover:outline hover:outline-foreground"
+            }`}
+            onClick={() => onSelect(nomination)}
           />
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
   );
 }
