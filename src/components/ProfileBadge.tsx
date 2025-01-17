@@ -10,6 +10,11 @@ import {
 import { signOut } from "@/server/auth";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import PhSignOut from "~icons/ph/sign-out";
+// import PhGear from "~icons/ph/gear";
+// import PhCheckSquare from "~icons/ph/check-square";
+// import PhFlask from "~icons/ph/flask";
+// import PhUser from "~icons/ph/user";
+// import PhTicket from "~icons/ph/ticket"
 import { type Session } from "next-auth";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -32,7 +37,7 @@ export const AvatarDropdown: React.FC<Props> = async ({ session }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="space-x-2">
+        <Button variant="ghost" className="space-x-2 hover:bg-transparent">
           <div className="flex flex-col">
             <div>{session.user?.name}</div>
             {session.user.role === "admin" && (

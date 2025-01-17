@@ -19,7 +19,7 @@ export const CastVoteButton = ({ nominationId, categoryId }: Props) => {
         mutate({ nominationId , categoryId});
       }}
     >
-      {isPending ? <PhCircleNotch className="animate-spin" /> : "Vote"}
+      {isPending ? <PhCircleNotch className="animate-spin" /> : "Cast vote"}
     </Button>
   );
 };

@@ -10,7 +10,7 @@ export function CategoryCard({
   points?: number | undefined | null;
 }) {
   return (
-    <Card className="lg:min-h-44">
+    <Card>
       <CardHeader className="p-4 lg:p-6">
         {points && (
           <span className="text-xs text-muted-foreground lg:text-sm">
