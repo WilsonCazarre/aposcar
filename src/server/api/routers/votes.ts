@@ -1,13 +1,18 @@
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "@/server/api/trpc";
 import { db } from "@/server/db";
 import {
   dbtCategory,
+  dbtMovie,
   dbtNomination,
   dbtVote,
 } from "@/server/db/schema/aposcar";
 import { users } from "@/server/db/schema/auth";
 import { TRPCError } from "@trpc/server";
-import { eq, sql } from "drizzle-orm";
+import { count, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
 const getCurrentUserVotesSchema = z.object({
@@ -83,4 +88,23 @@ export const votesRouter = createTRPCRouter({
         success: true,
       };
     }),
+
+  getUserRankings: publicProcedure.query(async ({ ctx }) => {
+    const results = await ctx.db
+      .select({
+        email: users.email,
+        role: users.role,
+        name: users.name,
+        profilePic: users.image,
+        score: count(),
+      })
+      .from(dbtVote)
+      .innerJoin(users, eq(dbtVote.user, users.id))
+      .innerJoin(dbtNomination, eq(dbtVote.nomination, dbtNomination.id))
+      .innerJoin(dbtCategory, eq(dbtNomination.category, dbtCategory.id))
+      .innerJoin(dbtMovie, eq(dbtNomination.movie, dbtMovie.id))
+      .groupBy(dbtVote.user, users.email, users.role, users.name, users.image)
+      .where(dbtNomination.isWinner.getSQL());
+    return results;
+  }),
 });
