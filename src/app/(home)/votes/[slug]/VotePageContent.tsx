@@ -11,6 +11,7 @@ import { MovieInfo } from "@/components/votes/MovieInfo";
 import { MovieSelector } from "@/components/votes/MovieSelector";
 import { CategoriesList } from "@/components/votes/CategoriesList";
 import { CategoryCard } from "@/components/votes/CategoryCard";
+import { api } from "@/trpc/react";
 
 interface VotePageProps {
   currentCategory: Category;
@@ -32,6 +33,8 @@ export function VotePageContent({
   const [showAllCategories, setShowAllCategories] = useState(false);
   const [selectedNomination, setSelectedNomination] =
     useState<Nomination | null>(null);
+
+  const { data } = api.votes.getVotes.useQuery();
 
   return (
     <div className="flex h-full justify-between gap-12">

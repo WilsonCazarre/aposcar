@@ -1,10 +1,16 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { db } from "@/server/db";
 import { users } from "@/server/db/schema/auth";
 import { auth } from "@/server/auth";
 import Link from "next/link";
 import { Progress } from "@/components/ui/progress";
+import { buttonVariants } from "@/components/ui/button";
 
 export default async function Home() {
   const session = await auth();
@@ -14,7 +20,6 @@ export default async function Home() {
     <div className="flex h-full justify-between gap-12">
       <div className="w-2/3">
         <h2 className="pb-4 text-2xl font-semibold">Ranking</h2>
-
         <div className="flex flex-col gap-4">
           {allUsers.map((user) => (
             <Link
@@ -37,7 +42,12 @@ export default async function Home() {
               </Avatar>
 
               <div className="flex w-full flex-col gap-2">
-                <p className="font-sm">{user.name}</p>
+                <div className="flex gap-2">
+                  <p className="font-sm">{user.name}</p>
+                  {user.email === session?.user.email && (
+                    <p className="text-muted-foreground">(you)</p>
+                  )}
+                </div>
                 <Progress value={69} max={100} className="h-2" />
               </div>
             </Link>
@@ -47,6 +57,16 @@ export default async function Home() {
 
       <div className="w-1/3">
         <h2 className="pb-4 text-2xl font-semibold">Last updates</h2>
+        <div className="flex items-center justify-between rounded-md bg-primary p-8">
+          <p className="text-primary-foreground">god pls vote i swear to god</p>
+          {/* <Button variant="secondary">ok i will leave me alone</Button> */}
+          <Link
+            className={buttonVariants({ variant: "secondary" })}
+            href="/votes"
+          >
+            ok i will leave me alone
+          </Link>
+        </div>
 
         <div className="flex flex-col gap-4">
           <Card className="w-full">

@@ -22,6 +22,7 @@ const getQueryClient = () => {
 
 export const api = createTRPCReact<AppRouter>();
 
+api.votes.getVotes.useQuery
 /**
  * Inference helper for inputs.
  *

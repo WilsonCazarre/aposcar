@@ -2,8 +2,16 @@ import { db } from "@/server/db";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { VotePageContent } from "./VotePageContent";
-import { Category } from "@/types/categories";
-import { Nomination } from "@/types/nominations";
+import { type Category } from "@/types/categories";
+import { type Nomination } from "@/types/nominations";
+import {
+  dbtCategory,
+  dbtMovie,
+  dbtNomination,
+  dbtReceiver,
+} from "@/server/db/schema/aposcar";
+import { eq } from "drizzle-orm";
+import { api } from "@/trpc/client";
 
 export const dynamicParams = false;
 
@@ -38,50 +46,36 @@ async function getCategoryWithNavigation(slug: string): Promise<{
       })
     : null;
 
-  const nominationsData = await db.query.dbtNomination.findMany({
-    where: (nomination, { eq }) => eq(nomination.category, current.id),
-    with: {
-      movie: true,
-      receiver: true,
-    },
-  });
-
-  const nominations: Nomination[] = nominationsData.map((nom) => {
-    const movieData =
-      typeof nom.movie === "string"
-        ? {
-            id: nom.movie,
-            poster: null,
-            name: null,
-            slug: null,
-            description: null,
-            tagline: null,
-            backdrop: null,
-            letterboxd: null,
-          }
-        : nom.movie;
-
-    const receiverData = nom.receiver
-      ? typeof nom.receiver === "string"
-        ? {
-            id: nom.receiver,
-            name: null,
-            image: null,
-            slug: null,
-            letterboxd: null,
-          }
-        : nom.receiver
-      : null;
-    
-    return {
-      id: nom.id,
-      description: nom.description,
-      isWinner: nom.isWinner,
-      category: nom.category,
-      movie: movieData,
-      receiver: receiverData,
-    };
-  });
+  const nominations = await db
+    .select({
+      id: dbtNomination.id,
+      description: dbtNomination.description,
+      isWinner: dbtNomination.isWinner,
+      category: dbtNomination.category,
+      categoryName: dbtCategory.name,
+      movie: {
+        id: dbtMovie.id,
+        poster: dbtMovie.poster,
+        name: dbtMovie.name,
+        slug: dbtMovie.slug,
+        description: dbtMovie.description,
+        tagline: dbtMovie.tagline,
+        backdrop: dbtMovie.backdrop,
+        letterboxd: dbtMovie.letterboxd,
+      },
+      receiver: {
+        id: dbtReceiver.id,
+        name: dbtReceiver.name,
+        image: dbtReceiver.image,
+        slug: dbtReceiver.slug,
+        letterboxd: dbtReceiver.letterboxd,
+      },
+    })
+    .from(dbtNomination)
+    .where(eq(dbtNomination.category, current.id))
+    .innerJoin(dbtCategory, eq(dbtNomination.category, dbtCategory.id))
+    .innerJoin(dbtMovie, eq(dbtNomination.movie, dbtMovie.id))
+    .leftJoin(dbtReceiver, eq(dbtNomination.receiver, dbtReceiver.id));
 
   return {
     currentCategory: current,
