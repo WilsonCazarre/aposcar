@@ -4,6 +4,7 @@ import { CastVoteButton } from "@/components/votes/CastVoteButton";
 import { type Nomination } from "@/types/nominations";
 import Link from "next/link";
 import PhArrowUpRight from "~icons/ph/arrow-up-right";
+import { SocialMediaBadge } from "@/components/SocialMediaBadge";
 
 interface MovieInfoProps {
   nomination: Nomination | null;
@@ -24,9 +25,7 @@ export function MovieInfo({ nomination }: MovieInfoProps) {
   }, []);
 
   if (!nomination) {
-    return (
-      <h2 className="py-4 text-2xl text-foreground">What's your vote?</h2>
-    );
+    return <h2 className="py-4 text-2xl text-foreground">What's your vote?</h2>;
   }
 
   const description = nomination.movie.description ?? "";
@@ -99,15 +98,10 @@ export function MovieInfo({ nomination }: MovieInfoProps) {
         {/* Links */}
         <div>
           {nomination.movie.letterboxd && (
-            <Badge variant="outline" className="hover:text-primary">
-              <Link
-                href={nomination.movie.letterboxd}
-                target="_blank"
-                className="flex items-center gap-1 p-1"
-              >
-                Letterboxd <PhArrowUpRight className="h-4 w-4" />
-              </Link>
-            </Badge>
+            <SocialMediaBadge
+              text="Letterboxd"
+              url={nomination.movie.letterboxd}
+            />
           )}
         </div>
 
