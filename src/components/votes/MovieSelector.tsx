@@ -26,11 +26,13 @@ export function MovieSelector({
         >
           <Image
             src={
-              (nomination.receiver?.image ?? nomination.movie.poster) ||
+              nomination.receiver?.image ??
+              nomination.movie.poster ??
               "/images/placeholder.jpg"
             }
             alt={
-              (nomination.receiver?.name ?? nomination.movie.name) ||
+              nomination.receiver?.name ??
+              nomination.movie.name ??
               "Movie poster"
             }
             fill

@@ -11,7 +11,6 @@ import {
   dbtReceiver,
 } from "@/server/db/schema/aposcar";
 import { eq } from "drizzle-orm";
-import { api } from "@/trpc/client";
 
 export const dynamicParams = false;
 

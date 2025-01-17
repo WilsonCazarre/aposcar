@@ -59,7 +59,6 @@ export default async function Home() {
         <h2 className="pb-4 text-2xl font-semibold">Last updates</h2>
         <div className="flex items-center justify-between rounded-md bg-primary p-8">
           <p className="text-primary-foreground">god pls vote i swear to god</p>
-          {/* <Button variant="secondary">ok i will leave me alone</Button> */}
           <Link
             className={buttonVariants({ variant: "secondary" })}
             href="/votes"

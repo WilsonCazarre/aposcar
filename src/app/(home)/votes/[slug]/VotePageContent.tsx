@@ -34,8 +34,6 @@ export function VotePageContent({
   const [selectedNomination, setSelectedNomination] =
     useState<Nomination | null>(null);
 
-  const { data } = api.votes.getVotes.useQuery();
-
   return (
     <div className="flex h-full justify-between gap-12">
       <div className="flex w-1/3 flex-col justify-center gap-4 pb-16">

@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { CastVoteButton } from "@/components/votes/CastVoteButton";
 import { type Nomination } from "@/types/nominations";
 import Link from "next/link";
 import PhArrowUpRight from "~icons/ph/arrow-up-right";
@@ -72,6 +73,7 @@ export function MovieInfo({ nomination }: MovieInfoProps) {
             </Link>
           </Badge>
         )}
+        <CastVoteButton nominationId={nomination.id} categoryId={nomination.category}/>
       </div>
     </div>
   );
