@@ -10,15 +10,17 @@ export function CategoryCard({
   points?: number | undefined | null;
 }) {
   return (
-    <Card>
-      <CardHeader>
+    <Card className="lg:min-h-44">
+      <CardHeader className="p-4 lg:p-6">
         {points && (
-          <span className="text-sm text-muted-foreground">
+          <span className="text-xs text-muted-foreground lg:text-sm">
             ({points} points)
           </span>
         )}
-        <CardTitle>{name}</CardTitle>
-        <p className="pt-2 text-sm text-muted-foreground">{description}</p>
+        <CardTitle className="text-xl lg:text-2xl">{name}</CardTitle>
+        <p className="hidden pt-2 text-sm text-muted-foreground lg:block">
+          {description}
+        </p>
       </CardHeader>
     </Card>
   );
