@@ -7,15 +7,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Category } from "@/server/api/zod/schema";
-import { api } from "@/trpc/server";
+import { type Category } from "@/server/api/zod/schema";
 import Link from "next/link";
 
 interface Props {
   categories: Category[];
 }
 
-export async function CategoriesList({ categories }: Props) {
+export function CategoriesList({ categories }: Props) {
   return (
     <Dialog>
       <DialogTrigger asChild>
