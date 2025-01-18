@@ -32,19 +32,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     sessionsTable: sessions,
     verificationTokensTable: verificationTokens,
   }) as Adapter,
-  providers: [Google],
+  providers: [
+    Google({
+      profile: (profile) => {
+        return { ...profile, username: profile.email.split("@")[0] };
+      },
+    }),
+  ],
   session: { strategy: "jwt" },
 
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
         token.role = user.role;
+        token.id = user.id;
+        token.username = user.username;
       }
       return token;
     },
     async session({ session, token }) {
       if (session?.user) {
+        session.user.username = token.username as string;
         session.user.id = token.id as string;
         session.user.role = token.role as UserSelect["role"];
       }

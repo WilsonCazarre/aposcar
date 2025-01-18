@@ -82,7 +82,7 @@ export const votesRouter = createTRPCRouter({
         id: users.id,
         email: users.email,
         role: users.role,
-        name: users.name,
+        username: users.username,
         profilePic: users.image,
         position:
           sql<number>`DENSE_RANK() OVER (ORDER BY COALESCE(SUM(CASE WHEN ${dbtNomination.isWinner} THEN ${dbtCategoryTypesPoints.points} ELSE 0 END), 0) DESC)`.as(

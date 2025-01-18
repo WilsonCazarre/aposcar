@@ -62,14 +62,14 @@ export default async function Home() {
                 >
                   <AvatarImage src={user.profilePic ?? ""} />
                   <AvatarFallback>
-                    {user.name?.[0]?.toUpperCase() ?? "@"}
+                    {user.username?.[0]?.toUpperCase() ?? "@"}
                   </AvatarFallback>
                 </Avatar>
 
                 <div className="flex w-full flex-col gap-2">
                   <div className="flex w-full items-end justify-between">
                     <p className="font-sm">
-                      {user.name}
+                      {user.username}
 
                       {user.email === session?.user.email && (
                         <span className="pl-2 text-muted-foreground">

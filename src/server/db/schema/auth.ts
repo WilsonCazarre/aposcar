@@ -20,13 +20,15 @@ export const users = pgTable("user", {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: text("name"),
+  username: text("username").unique().notNull(),
   email: text("email").unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
+  completedOnboarding: timestamp("completedOnboarding", { mode: "date" }),
   image: text("image"),
   role: userRoles("role").default("basic").notNull(),
 });
 
-const userSelectSchema = createSelectSchema(users);
+export const userSelectSchema = createSelectSchema(users);
 export type UserSelect = z.infer<typeof userSelectSchema>;
 
 export const accounts = pgTable(

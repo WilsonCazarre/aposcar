@@ -1,17 +1,5 @@
-import { auth } from "@/server/auth";
-import { redirect } from "next/navigation";
+import { PropsWithChildren } from "react";
 
-export const metadata = {
-  title: "Aposcar Login",
-  description: "Login to Aposcar",
-};
-
-export default async function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const session = await auth();
-  if (session) return redirect("/");
-  return <>{children}</>;
+export default function AuthLayout({ children }: PropsWithChildren) {
+  return <main className="flex items-center justify-center h-screen">{children}</main>;
 }
