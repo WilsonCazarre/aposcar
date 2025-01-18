@@ -24,7 +24,7 @@ export function MovieSelector({
 
   const SelectedBadge = () => (
     <div className="absolute right-0 z-50 rounded-bl-lg bg-primary p-1 text-xs font-semibold text-primary-foreground">
-      this one
+      Your vote
     </div>
   );
   return (
@@ -50,7 +50,7 @@ export function MovieSelector({
                   width={120}
                   height={180}
                   className={`h-full cursor-pointer rounded-md object-cover ${
-                    selectedId === nomination.id
+                    nomination.isUserVote
                       ? "outline outline-primary"
                       : "hover:outline hover:outline-foreground"
                   }`}
@@ -69,7 +69,7 @@ export function MovieSelector({
           <div
             key={nomination.id}
             className={`relative aspect-[2/3] flex-1 cursor-pointer rounded-md ${
-              selectedId === nomination.id
+              nomination.isUserVote
                 ? "outline outline-primary"
                 : "hover:outline hover:outline-foreground"
             }`}

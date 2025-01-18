@@ -49,7 +49,7 @@ export default async function Home() {
           {usersScores.map((user) => (
             <div key={user.id}>
               <Link
-                href={`/users/${user.id}`}
+                href={`/users/${user.username}`}
                 className="flex w-full items-center gap-4 border-b border-secondary px-6 py-4 hover:bg-secondary"
               >
                 <div className="text-xl font-bold">{user.position}º</div>
