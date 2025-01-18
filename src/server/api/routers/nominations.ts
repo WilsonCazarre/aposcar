@@ -1,5 +1,9 @@
 import { type Unpacked } from "@/lib/utils";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "@/server/api/trpc";
 import {
   categorySchema,
   moviesSchema,
@@ -22,25 +26,24 @@ const getCategoryInputSchema = z.object({
   categorySlug: z.string(),
 });
 
+export const fullNominationSchema = nominationSchema.extend({
+  movie: moviesSchema,
+  receiver: receiverSchema.nullable(),
+});
+
 const getCategoryWithNavigationSchema = z.object({
   currentCategory: categorySchema,
   prevCategory: categorySchema,
   nextCategory: categorySchema,
   categoryPoints: z.number(),
-  nominations: nominationSchema
-    .extend({
-      movie: moviesSchema,
-      receiver: receiverSchema.nullable(),
-      isUserVote: z.boolean()
-    })
-    .array(),
+  nominations: fullNominationSchema.extend({ isUserVote: z.boolean() }).array(),
 });
 
 export type CategoryWithNavigation = z.infer<
   typeof getCategoryWithNavigationSchema
 >;
 
-export type FullNomination = Unpacked<CategoryWithNavigation["nominations"]>
+export type FullNomination = Unpacked<CategoryWithNavigation["nominations"]>;
 
 export const nominationsRouter = createTRPCRouter({
   getCategoryWithNavigation: protectedProcedure
@@ -150,5 +153,44 @@ export const nominationsRouter = createTRPCRouter({
     .output(categorySchema.array())
     .query(async ({ ctx }) => {
       return await ctx.db.select().from(dbtCategory);
+    }),
+
+  getWinningNominations: publicProcedure
+    .output(fullNominationSchema.extend({ categoryName: z.string() }).array())
+    .query(async ({ ctx }) => {
+      const winningNominations = await ctx.db
+        .select({
+          id: dbtNomination.id,
+          description: dbtNomination.description,
+          isWinner: dbtNomination.isWinner,
+          isWinnerLastUpdate: dbtNomination.isWinnerLastUpdate,
+          category: dbtNomination.category,
+          categoryName: dbtCategory.name,
+          movie: {
+            id: dbtMovie.id,
+            poster: dbtMovie.poster,
+            name: dbtMovie.name,
+            slug: dbtMovie.slug,
+            description: dbtMovie.description,
+            tagline: dbtMovie.tagline,
+            backdrop: dbtMovie.backdrop,
+            letterboxd: dbtMovie.letterboxd,
+          },
+          receiver: {
+            id: dbtReceiver.id,
+            name: dbtReceiver.name,
+            image: dbtReceiver.image,
+            slug: dbtReceiver.slug,
+            letterboxd: dbtReceiver.letterboxd,
+          },
+        })
+        .from(dbtNomination)
+        .where(eq(dbtNomination.isWinner, true))
+        .innerJoin(dbtCategory, eq(dbtNomination.category, dbtCategory.id))
+        .innerJoin(dbtMovie, eq(dbtNomination.movie, dbtMovie.id))
+        .leftJoin(dbtReceiver, eq(dbtNomination.receiver, dbtReceiver.id))
+        .orderBy(dbtNomination.isWinnerLastUpdate);
+
+      return winningNominations;
     }),
 });

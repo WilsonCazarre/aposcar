@@ -1,12 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { db } from "@/server/db";
-import { users } from "@/server/db/schema/auth";
 import { auth } from "@/server/auth";
 import Link from "next/link";
 import { Progress } from "@/components/ui/progress";
 import { buttonVariants } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Nomination } from "@/types/nominations";
+import { formatDistanceToNow } from "date-fns";
 import {
   dbtCategory,
   dbtMovie,
@@ -16,52 +15,11 @@ import {
 import { eq } from "drizzle-orm";
 import { api } from "@/trpc/server";
 
-async function getWinningNominations() {
-  const winningNominations = await db
-    .select({
-      id: dbtNomination.id,
-      description: dbtNomination.description,
-      isWinner: dbtNomination.isWinner,
-      category: dbtNomination.category,
-      categoryName: dbtCategory.name,
-      movie: {
-        id: dbtMovie.id,
-        poster: dbtMovie.poster,
-        name: dbtMovie.name,
-        slug: dbtMovie.slug,
-        description: dbtMovie.description,
-        tagline: dbtMovie.tagline,
-        backdrop: dbtMovie.backdrop,
-        letterboxd: dbtMovie.letterboxd,
-      },
-      receiver: {
-        id: dbtReceiver.id,
-        name: dbtReceiver.name,
-        image: dbtReceiver.image,
-        slug: dbtReceiver.slug,
-        letterboxd: dbtReceiver.letterboxd,
-      },
-    })
-    .from(dbtNomination)
-    .where(eq(dbtNomination.isWinner, true))
-    .innerJoin(dbtCategory, eq(dbtNomination.category, dbtCategory.id))
-    .innerJoin(dbtMovie, eq(dbtNomination.movie, dbtMovie.id))
-    .leftJoin(dbtReceiver, eq(dbtNomination.receiver, dbtReceiver.id));
-
-  const { usersScores, maxScore } = await api.votes.getUserRankings();
-
-  return {
-    winningNominations,
-    usersScores,
-    maxScore,
-  };
-}
-
 export default async function Home() {
   const session = await auth();
 
-  const { winningNominations, usersScores, maxScore } =
-    await getWinningNominations();
+  const winningNominations = await api.nominations.getWinningNominations();
+  const { maxScore, usersScores } = await api.votes.getUserRankings();
 
   // TODO: No mobile adicionar um toggle entre a visão de ranking e updates.
   return (
@@ -167,7 +125,15 @@ export default async function Home() {
         >
           {winningNominations.map((nomination) => (
             <div key={nomination.id} className="space-y-1 border-b p-4">
-              <h3 className="text-sm">{nomination.categoryName}</h3>
+              <div className="flex justify-between">
+                <h3 className="text-sm">{nomination.categoryName}</h3>
+                {nomination.isWinnerLastUpdate && (
+                  <p className="text-xs text-muted-foreground">
+                    {formatDistanceToNow(nomination.isWinnerLastUpdate)} ago
+                  </p>
+                )}
+              </div>
+
               <h2 className="text-lg font-semibold text-primary">
                 {nomination.movie.name}
               </h2>
