@@ -4,6 +4,7 @@ import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "@/trpc/react";
+import { AppProviders } from "@/app/_providers";
 
 export const metadata: Metadata = {
   title: "Aposcar",
@@ -16,11 +17,13 @@ export default async function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${GeistSans.variable} dark`}>
-      <body>
-        <main className="min-h-screen bg-background text-foreground">
-          <TRPCReactProvider>{children}</TRPCReactProvider>
-        </main>
-      </body>
+      <AppProviders>
+        <body>
+          <main className="min-h-screen bg-background text-foreground">
+            <TRPCReactProvider>{children}</TRPCReactProvider>
+          </main>
+        </body>
+      </AppProviders>
     </html>
   );
 }

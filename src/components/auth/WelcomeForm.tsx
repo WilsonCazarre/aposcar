@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/trpc/react";
 import PhCircleNotch from "~icons/ph/circle-notch";
 import { useToast } from "@/hooks/use-toast";
+import { useSession } from "next-auth/react";
 import {
   OnboardUserInput,
   onboardUserInputSchema,
@@ -25,9 +26,11 @@ import { redirect, useRouter } from "next/navigation";
 export const WelcomeForm = () => {
   const { toast } = useToast();
   const router = useRouter();
+  const { update } = useSession();
   const { mutate, isPending, isSuccess } = api.users.onboardUser.useMutation({
     onSuccess: (data, { username }) => {
       console.log({ data });
+      update({ user: { username } });
       toast({
         title: "Account created successfully",
         description: `Welcome ${username}`,

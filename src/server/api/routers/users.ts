@@ -1,5 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { onboardUserInputSchema } from "@/server/api/zod/users";
+import { auth } from "@/server/auth";
 import { users, userSelectSchema } from "@/server/db/schema/auth";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";

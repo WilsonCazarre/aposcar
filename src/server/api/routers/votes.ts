@@ -79,8 +79,6 @@ export const votesRouter = createTRPCRouter({
   getUserRankings: publicProcedure.query(async ({ ctx }) => {
     const usersData = await ctx.db
       .select({
-        id: users.id,
-        email: users.email,
         role: users.role,
         username: users.username,
         profilePic: users.image,
