@@ -3,6 +3,7 @@ export interface Nomination {
   description: string | null;
   isWinner: boolean;
   category: string;
+  categoryName?: string | null;
   movie: {
     id: string;
     poster: string | null;

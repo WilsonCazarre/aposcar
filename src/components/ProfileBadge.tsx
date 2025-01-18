@@ -54,6 +54,7 @@ export const AvatarDropdown: React.FC<Props> = async ({ session }) => {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent>
+        {/* TODO: Only show this button if there's no winning nomination still */}
         <DropdownMenuItem asChild>
           <Link href="/votes">Cast your vote!</Link>
         </DropdownMenuItem>

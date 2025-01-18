@@ -14,6 +14,7 @@ export function MovieSelector({
   selectedId,
   onSelect,
 }: MovieSelectorProps) {
+  console.log(nominations);
   return (
     <>
       {/* Mobile view */}
