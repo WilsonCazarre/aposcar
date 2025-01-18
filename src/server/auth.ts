@@ -1,5 +1,5 @@
-import NextAuth, { type DefaultSession } from "next-auth";
-import Google from "next-auth/providers/google";
+import NextAuth, { User, type DefaultSession } from "next-auth";
+import Google, { GoogleProfile } from "next-auth/providers/google";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "@/server/db";
 import {
@@ -34,15 +34,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   }) as Adapter,
   providers: [
     Google({
-      profile: (profile) => {
-        return { ...profile, username: profile.email.split("@")[0] };
+      profile: (profile: GoogleProfile) => {
+        return {
+          id: profile.sub,
+          email: profile.email,
+          image: profile.picture,
+          completedOnboarding: null,
+          emailVerified: null,
+          role: "basic",
+          username: profile.email.split("@")[0] ?? profile.name,
+        };
       },
     }),
   ],
   session: { strategy: "jwt" },
 
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, session, trigger }) {
+      // console.dir({ token, user, session, trigger }, { depth: null });
+      if (trigger === "update" && session.user.username) {
+        token.username = session.user.username;
+      }
       if (user) {
         token.role = user.role;
         token.id = user.id;
@@ -50,12 +62,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token, user, trigger }) {
       if (session?.user) {
         session.user.username = token.username as string;
         session.user.id = token.id as string;
         session.user.role = token.role as UserSelect["role"];
       }
+
+      if (token.username) {
+        session.user.username = token.username;
+      }
+      console.log({ newSession: session });
       return session;
     },
   },

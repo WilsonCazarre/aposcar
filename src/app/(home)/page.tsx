@@ -47,7 +47,7 @@ export default async function Home() {
           style={{ maxHeight: "calc(100vh - 13rem)" }}
         >
           {usersScores.map((user) => (
-            <div key={user.id}>
+            <div key={user.username}>
               <Link
                 href={`/users/${user.username}`}
                 className="flex w-full items-center gap-4 border-b border-secondary px-6 py-4 hover:bg-secondary"
@@ -55,7 +55,7 @@ export default async function Home() {
                 <div className="text-xl font-bold">{user.position}º</div>
                 <Avatar
                   className={
-                    user.email === session?.user.email
+                    user.username === session?.user.username
                       ? "border-2 border-primary"
                       : ""
                   }
@@ -71,7 +71,7 @@ export default async function Home() {
                     <p className="font-sm">
                       {user.username}
 
-                      {user.email === session?.user.email && (
+                      {user.username === session?.user.username && (
                         <span className="pl-2 text-muted-foreground">
                           (you)
                         </span>
