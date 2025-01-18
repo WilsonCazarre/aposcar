@@ -20,7 +20,7 @@ export function MovieSelector({
   const { data } = api.nominations.getCategoryWithNavigation.useQuery({
     categorySlug,
   });
-  const nominations = data?.nominations
+  const nominations = data?.nominations;
 
   const SelectedBadge = () => (
     <div className="absolute right-0 z-50 rounded-bl-lg bg-primary p-1 text-xs font-semibold text-primary-foreground">

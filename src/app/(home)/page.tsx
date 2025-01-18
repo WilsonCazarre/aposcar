@@ -1,83 +1,179 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { db } from "@/server/db";
 import { users } from "@/server/db/schema/auth";
 import { auth } from "@/server/auth";
 import Link from "next/link";
 import { Progress } from "@/components/ui/progress";
 import { buttonVariants } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Nomination } from "@/types/nominations";
+import {
+  dbtCategory,
+  dbtMovie,
+  dbtNomination,
+  dbtReceiver,
+} from "@/server/db/schema/aposcar";
+import { eq } from "drizzle-orm";
+import { api } from "@/trpc/server";
+
+async function getWinningNominations() {
+  const winningNominations = await db
+    .select({
+      id: dbtNomination.id,
+      description: dbtNomination.description,
+      isWinner: dbtNomination.isWinner,
+      category: dbtNomination.category,
+      categoryName: dbtCategory.name,
+      movie: {
+        id: dbtMovie.id,
+        poster: dbtMovie.poster,
+        name: dbtMovie.name,
+        slug: dbtMovie.slug,
+        description: dbtMovie.description,
+        tagline: dbtMovie.tagline,
+        backdrop: dbtMovie.backdrop,
+        letterboxd: dbtMovie.letterboxd,
+      },
+      receiver: {
+        id: dbtReceiver.id,
+        name: dbtReceiver.name,
+        image: dbtReceiver.image,
+        slug: dbtReceiver.slug,
+        letterboxd: dbtReceiver.letterboxd,
+      },
+    })
+    .from(dbtNomination)
+    .where(eq(dbtNomination.isWinner, true))
+    .innerJoin(dbtCategory, eq(dbtNomination.category, dbtCategory.id))
+    .innerJoin(dbtMovie, eq(dbtNomination.movie, dbtMovie.id))
+    .leftJoin(dbtReceiver, eq(dbtNomination.receiver, dbtReceiver.id));
+
+  const { usersScores, maxScore } = await api.votes.getUserRankings();
+
+  return {
+    winningNominations,
+    usersScores,
+    maxScore,
+  };
+}
 
 export default async function Home() {
   const session = await auth();
-  const allUsers = await db.select().from(users).orderBy(users.name);
 
+  const { winningNominations, usersScores, maxScore } =
+    await getWinningNominations();
+
+  // TODO: No mobile adicionar um toggle entre a visão de ranking e updates.
   return (
-    <div className="flex h-full justify-between gap-12">
-      <div className="w-2/3">
-        <h2 className="pb-4 text-2xl font-semibold">Ranking</h2>
-        <div className="flex flex-col gap-4">
-          {allUsers.map((user) => (
-            <Link
-              key={user.id}
-              href={`/users/${user.id}`}
-              className="flex w-full items-center gap-4 rounded-md border border-secondary p-4 hover:bg-secondary"
-            >
-              <div className="text-xl font-bold">1º</div>
-              <Avatar
-                className={
-                  user.email === session?.user.email
-                    ? "border-2 border-primary"
-                    : ""
-                }
-              >
-                <AvatarImage src={user.image ?? ""} />
-                <AvatarFallback>
-                  {user.name?.[0]?.toUpperCase() ?? "@"}
-                </AvatarFallback>
-              </Avatar>
-
-              <div className="flex w-full flex-col gap-2">
-                <div className="flex gap-2">
-                  <p className="font-sm">{user.name}</p>
-                  {user.email === session?.user.email && (
-                    <p className="text-muted-foreground">(you)</p>
-                  )}
-                </div>
-                <Progress value={69} max={100} className="h-2" />
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      <div className="w-1/3">
-        <h2 className="pb-4 text-2xl font-semibold">Last updates</h2>
-        <div className="flex items-center justify-between rounded-md bg-primary p-8">
-          <p className="text-primary-foreground">god pls vote i swear to god</p>
+    <div className="flex h-full flex-col justify-between gap-6 lg:flex-row">
+      {winningNominations.length === 0 && (
+        <div className="my-4 flex items-center justify-between rounded bg-primary p-4 lg:hidden">
+          {/* TODO: Only show if user haven't voted in any nomination */}
+          <p className="text-primary-foreground">
+            Don't forget to cast your votes and share your predictions!
+          </p>
           <Link
-            className={buttonVariants({ variant: "secondary" })}
+            className={buttonVariants({ variant: "outline" })}
             href="/votes"
           >
-            ok i will leave me alone
+            Go vote
           </Link>
         </div>
+      )}
 
-        <div className="flex flex-col gap-4">
-          <Card className="w-full">
-            <CardHeader>
-              <CardTitle>Best Picture</CardTitle>
-            </CardHeader>
+      <div className="lg:w-2/3">
+        <h2 className="pb-4 pl-4 text-2xl font-semibold">Ranking</h2>
 
-            <CardContent>
-              <p>Megamind :)</p>
-            </CardContent>
-          </Card>
-        </div>
+        <ScrollArea
+          className="flex flex-col gap-4 rounded-md border"
+          style={{ maxHeight: "calc(100vh - 13rem)" }}
+        >
+          {usersScores.map((user) => (
+            <div key={user.id}>
+              <Link
+                href={`/users/${user.id}`}
+                className="flex w-full items-center gap-4 border-b border-secondary px-6 py-4 hover:bg-secondary"
+              >
+                <div className="text-xl font-bold">{user.position}º</div>
+                <Avatar
+                  className={
+                    user.email === session?.user.email
+                      ? "border-2 border-primary"
+                      : ""
+                  }
+                >
+                  <AvatarImage src={user.profilePic ?? ""} />
+                  <AvatarFallback>
+                    {user.name?.[0]?.toUpperCase() ?? "@"}
+                  </AvatarFallback>
+                </Avatar>
+
+                <div className="flex w-full flex-col gap-2">
+                  <div className="flex w-full items-end justify-between">
+                    <p className="font-sm">
+                      {user.name}
+
+                      {user.email === session?.user.email && (
+                        <span className="pl-2 text-muted-foreground">
+                          (you)
+                        </span>
+                      )}
+                    </p>
+
+                    <p className="text-sm">{user.score} points</p>
+                  </div>
+                  <Progress
+                    value={Number(user.score)}
+                    max={Number(maxScore)}
+                    className="h-2"
+                  />
+                </div>
+              </Link>
+            </div>
+          ))}
+        </ScrollArea>
+      </div>
+
+      <div className="flex flex-col lg:w-1/3">
+        <h2 className="pb-4 pl-4 text-2xl font-semibold">Last updates</h2>
+
+        {winningNominations.length === 0 && (
+          <div>
+            <div className="space-y-1 rounded border p-4">
+              <h3 className="text-sm">
+                When the premiation starts you'll see the winners right here!
+              </h3>
+            </div>
+
+            {/* TODO: Only show if user haven't voted in any nomination */}
+            <div className="my-4 hidden items-center justify-between rounded bg-primary p-4 lg:flex">
+              <p className="text-primary-foreground">
+                For now, don't forget to cast your votes and share your
+                predictions!
+              </p>
+              <Link
+                className={buttonVariants({ variant: "outline" })}
+                href="/votes"
+              >
+                Go vote
+              </Link>
+            </div>
+          </div>
+        )}
+
+        <ScrollArea
+          className="flex flex-col gap-4 rounded-md border"
+          style={{ maxHeight: "calc(100vh - 13rem)" }}
+        >
+          {winningNominations.map((nomination) => (
+            <div key={nomination.id} className="space-y-1 border-b p-4">
+              <h3 className="text-sm">{nomination.categoryName}</h3>
+              <h2 className="text-lg font-semibold text-primary">
+                {nomination.movie.name}
+              </h2>
+            </div>
+          ))}
+        </ScrollArea>
       </div>
     </div>
   );
