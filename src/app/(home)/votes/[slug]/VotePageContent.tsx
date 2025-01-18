@@ -4,24 +4,15 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import PhArrowLeft from "~icons/ph/arrow-left";
 import PhArrowRight from "~icons/ph/arrow-right";
-import type { Category } from "@/types/categories";
-import type { Nomination } from "@/types/nominations";
 import { useState } from "react";
 import { MovieInfo } from "@/components/votes/MovieInfo";
 import { MovieSelector } from "@/components/votes/MovieSelector";
-import { CategoriesList } from "@/components/votes/CategoriesList";
 import { CategoryCard } from "@/components/votes/CategoryCard";
-import { api } from "@/trpc/react";
 import Image from "next/image";
+import { type CategoryWithNavigation } from "@/server/api/routers/nominations";
+import { type Unpacked } from "@/lib/utils";
 
-interface VotePageProps {
-  currentCategory: Category;
-  prevCategory: Category;
-  nextCategory: Category;
-  categoryPoints: number | undefined | null;
-  nominations: Nomination[];
-  categories: Category[];
-}
+type Nomination = Unpacked<CategoryWithNavigation["nominations"]>;
 
 export function VotePageContent({
   currentCategory,
@@ -29,8 +20,7 @@ export function VotePageContent({
   nextCategory,
   categoryPoints,
   nominations,
-  categories,
-}: VotePageProps) {
+}: CategoryWithNavigation) {
   const [selectedNomination, setSelectedNomination] =
     useState<Nomination | null>(null);
 
@@ -49,7 +39,7 @@ export function VotePageContent({
               </Link>
             </Button>
 
-            <CategoriesList categories={categories} />
+            {/* <CategoriesList categories={categories} /> */}
 
             <Button
               variant="outline"
@@ -77,7 +67,7 @@ export function VotePageContent({
       </div>
 
       <div className="lg:w-1/2">
-        <div className="hidden lg:block fixed right-0 top-0 aspect-[16/9] w-1/2">
+        <div className="fixed right-0 top-0 hidden aspect-[16/9] w-1/2 lg:block">
           {selectedNomination?.movie.backdrop && (
             <Image
               src={selectedNomination.movie.backdrop}

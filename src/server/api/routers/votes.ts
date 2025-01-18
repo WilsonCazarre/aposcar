@@ -101,8 +101,6 @@ export const votesRouter = createTRPCRouter({
       .from(dbtVote)
       .innerJoin(users, eq(dbtVote.user, users.id))
       .innerJoin(dbtNomination, eq(dbtVote.nomination, dbtNomination.id))
-      .innerJoin(dbtCategory, eq(dbtNomination.category, dbtCategory.id))
-      .innerJoin(dbtMovie, eq(dbtNomination.movie, dbtMovie.id))
       .groupBy(dbtVote.user, users.email, users.role, users.name, users.image)
       .where(dbtNomination.isWinner.getSQL());
     return results;
