@@ -62,13 +62,6 @@ export default async function Home() {
 
   const { winningNominations } = await getWinningNominations();
 
-  const testUsers = Array.from({ length: 12 }, (_, i) => ({
-    id: i,
-    name: `User ${i}`,
-    email: `user@${i}.com`,
-    image: "",
-  }));
-
   // TODO: No mobile adicionar um toggle entre a visão de ranking e updates.
   return (
     <div className="flex h-full flex-col justify-between gap-6 lg:flex-row">
@@ -94,7 +87,7 @@ export default async function Home() {
           className="flex flex-col gap-4 rounded-md border"
           style={{ maxHeight: "calc(100vh - 13rem)" }}
         >
-          {testUsers.map((user) => (
+          {allUsers.map((user) => (
             <div key={user.id}>
               <Link
                 href={`/users/${user.id}`}
