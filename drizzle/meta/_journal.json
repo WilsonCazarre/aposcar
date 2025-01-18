@@ -64,6 +64,20 @@
       "when": 1737038586909,
       "tag": "0008_friendly_madame_web",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1737188932703,
+      "tag": "0009_magical_namora",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1737189099196,
+      "tag": "0010_update-iswinner-timestamp",
+      "breakpoints": true
     }
   ]
 }

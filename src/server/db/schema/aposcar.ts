@@ -9,6 +9,7 @@ import {
   text,
   uuid,
   integer,
+  timestamp,
 } from "drizzle-orm/pg-core";
 import { users } from "./auth";
 
@@ -66,6 +67,7 @@ export const dbtReceiver = createTable("receivers", {
 export const dbtNomination = createTable("nominations", {
   id: uuid("id").defaultRandom().notNull().primaryKey(),
   isWinner: boolean("isWinner").default(false).notNull(),
+  isWinnerLastUpdate: timestamp("isWinnerLastUpdate"),
   category: uuid("category")
     .references(() => dbtCategory.id)
     .notNull(),
@@ -129,3 +131,17 @@ export const voteRelations = relations(dbtVote, ({ one }) => ({
 export const nominationVotesRelation = relations(dbtNomination, ({ many }) => ({
   votes: many(dbtVote),
 }));
+
+export const updateTimestamp = sql`CREATE OR REPLACE FUNCTION update_changetimestamp_column()
+RETURNS TRIGGER AS $$
+BEGIN
+   NEW."isWinnerLastUpdate" = now(); 
+   RETURN NEW;
+END;
+$$ language 'plpgsql';`;
+
+export const updateTimestampOnIsWinner = sql`
+CREATE TRIGGER updateTimestampOnIsWinner BEFORE UPDATE
+    ON ${dbtNomination} FOR EACH ROW EXECUTE PROCEDURE 
+    update_changetimestamp_column();
+`;

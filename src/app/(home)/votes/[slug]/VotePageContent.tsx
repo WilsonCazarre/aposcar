@@ -11,15 +11,22 @@ import { CategoryCard } from "@/components/votes/CategoryCard";
 import Image from "next/image";
 import { type CategoryWithNavigation } from "@/server/api/routers/nominations";
 import { type Unpacked } from "@/lib/utils";
+import { CategoriesList } from "@/components/votes/CategoriesList";
+import { type Category } from "@/server/api/zod/schema";
 
 type Nomination = Unpacked<CategoryWithNavigation["nominations"]>;
+
+interface Props extends CategoryWithNavigation {
+  categories: Category[];
+}
 
 export function VotePageContent({
   currentCategory,
   prevCategory,
   nextCategory,
   categoryPoints,
-}: CategoryWithNavigation) {
+  categories,
+}: Props) {
   const [selectedNomination, setSelectedNomination] =
     useState<Nomination | null>(null);
 
@@ -38,7 +45,7 @@ export function VotePageContent({
               </Link>
             </Button>
 
-            {/* <CategoriesList categories={categories} /> */}
+            <CategoriesList categories={categories} />
 
             <Button
               variant="outline"

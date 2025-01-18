@@ -1,9 +1,8 @@
 import { db } from "@/server/db";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { VotePageContent } from "./VotePageContent"
+import { VotePageContent } from "./VotePageContent";
 import { api } from "@/trpc/server";
-
 
 export const dynamicParams = false;
 
@@ -19,11 +18,13 @@ const VotePage = async ({ params }: { params: { slug: string } }) => {
     categorySlug: params.slug,
   });
 
+  const categories = await api.nominations.getCategories();
+
   if (!data.currentCategory) return notFound();
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <VotePageContent {...data} />
+      <VotePageContent {...data} categories={categories} />
     </Suspense>
   );
 };

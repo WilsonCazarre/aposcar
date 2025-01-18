@@ -7,10 +7,15 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Category } from "@/types/categories";
+import { Category } from "@/server/api/zod/schema";
+import { api } from "@/trpc/server";
 import Link from "next/link";
 
-export function CategoriesList({ categories }: { categories: Category[] }) {
+interface Props {
+  categories: Category[];
+}
+
+export async function CategoriesList({ categories }: Props) {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -19,7 +24,7 @@ export function CategoriesList({ categories }: { categories: Category[] }) {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[425px] ">
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>All Categories</DialogTitle>
         </DialogHeader>

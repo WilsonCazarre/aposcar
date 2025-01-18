@@ -3,16 +3,13 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
-import { db } from "@/server/db";
 import {
   dbtCategoryTypesPoints,
   dbtCategory,
-  dbtMovie,
   dbtNomination,
   dbtVote,
 } from "@/server/db/schema/aposcar";
 import { users } from "@/server/db/schema/auth";
-import { TRPCError } from "@trpc/server";
 import { desc, eq, sql, sum } from "drizzle-orm";
 import { z } from "zod";
 

@@ -1,5 +1,5 @@
 import { type Unpacked } from "@/lib/utils";
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc";
 import {
   categorySchema,
   moviesSchema,
@@ -144,5 +144,10 @@ export const nominationsRouter = createTRPCRouter({
         categoryPoints,
         nominations: nominations,
       };
+    }),
+  getCategories: publicProcedure
+    .output(categorySchema.array())
+    .query(async ({ ctx }) => {
+      return await ctx.db.select().from(dbtCategory);
     }),
 });
