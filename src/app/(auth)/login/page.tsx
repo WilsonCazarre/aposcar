@@ -18,8 +18,13 @@ export default async function LoginPage() {
         <Card>
           <CardHeader>
             <CardTitle>Aposcar</CardTitle>
-            <CardDescription>Escolha um dos métodos de Login</CardDescription>
+            <CardDescription>
+              Chose a login method!
+              <br />
+              (We only have one)
+            </CardDescription>
           </CardHeader>
+
           <CardContent>
             <form
               action={async () => {
@@ -32,7 +37,7 @@ export default async function LoginPage() {
                 type="submit"
               >
                 <SimpleIconsGoogle />
-                <div>Login com Google</div>
+                <div>Sign in with Google</div>
               </Button>
             </form>
           </CardContent>

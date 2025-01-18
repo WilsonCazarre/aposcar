@@ -16,12 +16,26 @@ export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const session = await auth();
-  
+
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex min-h-screen flex-col items-center justify-center">
       <Navbar />
-      <hr className="w-full" />
-      <div className="mt-40">{children}</div>
+      {/* <hr className="w-full" /> */}
+      <div className="w-full flex-grow px-6 lg:px-12">{children}</div>
+
+      <footer className="w-full py-4 text-center text-sm text-muted-foreground">
+        <p className="">
+          Made with 💛 by{" "}
+          <a
+            href="https://www.labquatro.com.br"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-foreground hover:text-primary"
+          >
+            LabQuatro
+          </a>
+        </p>
+      </footer>
     </div>
   );
 }

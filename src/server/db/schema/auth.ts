@@ -10,6 +10,8 @@ import {
 import { createSelectSchema } from "drizzle-zod";
 import type { AdapterAccountType } from "next-auth/adapters";
 import { z } from "zod";
+import { dbtVote } from "./aposcar";
+import { relations } from "drizzle-orm";
 
 export const userRoles = pgEnum("userRoles", ["basic", "admin"]);
 
@@ -93,3 +95,8 @@ export const authenticators = pgTable(
     }),
   }),
 );
+
+export const userVotesRelation = relations(users, ({ many }) => ({
+  votes: many(dbtVote),
+}));
+
