@@ -13,7 +13,7 @@ import {
 } from "@/server/db/schema/aposcar";
 import { users } from "@/server/db/schema/auth";
 import { TRPCError } from "@trpc/server";
-import { count, eq, sql, sum } from "drizzle-orm";
+import { desc, eq, sql, sum } from "drizzle-orm";
 import { z } from "zod";
 
 const getCurrentUserVotesSchema = z.object({
@@ -94,22 +94,32 @@ export const votesRouter = createTRPCRouter({
   getUserRankings: publicProcedure.query(async ({ ctx }) => {
     const usersData = await ctx.db
       .select({
+        id: users.id,
         email: users.email,
         role: users.role,
         name: users.name,
         profilePic: users.image,
-        score: sum(dbtCategoryTypesPoints.points).as("score"),
+        position:
+          sql<number>`DENSE_RANK() OVER (ORDER BY COALESCE(SUM(CASE WHEN ${dbtNomination.isWinner} THEN ${dbtCategoryTypesPoints.points} ELSE 0 END), 0) DESC)`.as(
+            "position",
+          ),
+        score:
+          sql<number>`COALESCE(SUM(CASE WHEN ${dbtNomination.isWinner} THEN ${dbtCategoryTypesPoints.points} ELSE 0 END), 0)`.as(
+            "score",
+          ),
       })
-      .from(dbtVote)
-      .innerJoin(users, eq(dbtVote.user, users.id))
-      .innerJoin(dbtNomination, eq(dbtVote.nomination, dbtNomination.id))
-      .innerJoin(dbtCategory, eq(dbtNomination.category, dbtCategory.id))
-      .innerJoin(
+      .from(users)
+      .leftJoin(dbtVote, eq(dbtVote.user, users.id))
+      .leftJoin(dbtNomination, eq(dbtVote.nomination, dbtNomination.id))
+      .leftJoin(dbtCategory, eq(dbtNomination.category, dbtCategory.id))
+      .leftJoin(
         dbtCategoryTypesPoints,
         eq(dbtCategory.type, dbtCategoryTypesPoints.categoryType),
       )
-      .groupBy(dbtVote.user, users.email, users.role, users.name, users.image)
-      .where(dbtNomination.isWinner.getSQL());
+      .groupBy(users.id, users.email, users.role, users.name, users.image)
+      .orderBy(() =>
+        desc(sql`COALESCE(SUM(${dbtCategoryTypesPoints.points}), 0)`),
+      );
 
     const scoreData = await ctx.db
       .select({

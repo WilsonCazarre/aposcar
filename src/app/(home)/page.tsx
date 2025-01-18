@@ -50,8 +50,6 @@ async function getWinningNominations() {
 
   const { usersScores, maxScore } = await api.votes.getUserRankings();
 
-  console.log({ usersScores, maxScore });
-
   return {
     winningNominations,
     usersScores,
@@ -61,7 +59,6 @@ async function getWinningNominations() {
 
 export default async function Home() {
   const session = await auth();
-  const allUsers = await db.select().from(users).orderBy(users.name);
 
   const { winningNominations, usersScores, maxScore } =
     await getWinningNominations();
@@ -91,13 +88,13 @@ export default async function Home() {
           className="flex flex-col gap-4 rounded-md border"
           style={{ maxHeight: "calc(100vh - 13rem)" }}
         >
-          {allUsers.map((user) => (
+          {usersScores.map((user) => (
             <div key={user.id}>
               <Link
                 href={`/users/${user.id}`}
                 className="flex w-full items-center gap-4 border-b border-secondary px-6 py-4 hover:bg-secondary"
               >
-                <div className="text-xl font-bold">1º</div>
+                <div className="text-xl font-bold">{user.position}º</div>
                 <Avatar
                   className={
                     user.email === session?.user.email
@@ -105,7 +102,7 @@ export default async function Home() {
                       : ""
                   }
                 >
-                  <AvatarImage src={user.image ?? ""} />
+                  <AvatarImage src={user.profilePic ?? ""} />
                   <AvatarFallback>
                     {user.name?.[0]?.toUpperCase() ?? "@"}
                   </AvatarFallback>
@@ -123,19 +120,10 @@ export default async function Home() {
                       )}
                     </p>
 
-                    <p className="text-sm">
-                      {usersScores.find((iUser) => iUser.email === user.email)
-                        ?.score ?? 0}{" "}
-                      points
-                    </p>
+                    <p className="text-sm">{user.score} points</p>
                   </div>
                   <Progress
-                    value={
-                      Number(
-                        usersScores.find((iUser) => iUser.email === user.email)
-                          ?.score,
-                      ) ?? 0
-                    }
+                    value={Number(user.score)}
                     max={Number(maxScore)}
                     className="h-2"
                   />
