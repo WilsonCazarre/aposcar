@@ -14,10 +14,9 @@ import {
   dbtReceiver,
 } from "@/server/db/schema/aposcar";
 import { eq } from "drizzle-orm";
+import { api } from "@/trpc/server";
 
-async function getWinningNominations(): Promise<{
-  winningNominations: Nomination[];
-}> {
+async function getWinningNominations() {
   const winningNominations = await db
     .select({
       id: dbtNomination.id,
@@ -49,10 +48,14 @@ async function getWinningNominations(): Promise<{
     .innerJoin(dbtMovie, eq(dbtNomination.movie, dbtMovie.id))
     .leftJoin(dbtReceiver, eq(dbtNomination.receiver, dbtReceiver.id));
 
-  console.log(winningNominations);
+  const { usersScores, maxScore } = await api.votes.getUserRankings();
+
+  console.log({ usersScores, maxScore });
 
   return {
     winningNominations,
+    usersScores,
+    maxScore,
   };
 }
 
@@ -60,7 +63,8 @@ export default async function Home() {
   const session = await auth();
   const allUsers = await db.select().from(users).orderBy(users.name);
 
-  const { winningNominations } = await getWinningNominations();
+  const { winningNominations, usersScores, maxScore } =
+    await getWinningNominations();
 
   // TODO: No mobile adicionar um toggle entre a visão de ranking e updates.
   return (
@@ -119,9 +123,22 @@ export default async function Home() {
                       )}
                     </p>
 
-                    <p className="text-sm">69 points</p>
+                    <p className="text-sm">
+                      {usersScores.find((iUser) => iUser.email === user.email)
+                        ?.score ?? 0}{" "}
+                      points
+                    </p>
                   </div>
-                  <Progress value={69} max={100} className="h-2" />
+                  <Progress
+                    value={
+                      Number(
+                        usersScores.find((iUser) => iUser.email === user.email)
+                          ?.score,
+                      ) ?? 0
+                    }
+                    max={Number(maxScore)}
+                    className="h-2"
+                  />
                 </div>
               </Link>
             </div>
