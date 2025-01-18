@@ -23,7 +23,7 @@ const getCurrentUserVotesSchema = z.object({
 
 const castVoteInputSchema = z.object({
   nominationId: z.string(),
-  categoryId: z.string(),
+  categorySlug: z.string(),
 });
 
 export const votesRouter = createTRPCRouter({
@@ -50,19 +50,7 @@ export const votesRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      console.log({ input });
-      const user = (
-        await ctx.db
-          .select({ id: users.id })
-          .from(users)
-          .where(eq(users.email, ctx.session.user.email ?? ""))
-      ).at(0);
-      if (!user)
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "User not found",
-        });
-
+      console.log(ctx.session.user.id);
       // DELETE with JOINS are not yet available on drizzle
       // https://github.com/drizzle-team/drizzle-orm/issues/3100
       await ctx.db.execute(sql`
@@ -76,14 +64,14 @@ export const votesRouter = createTRPCRouter({
               INNER JOIN ${dbtNomination} ON ${dbtVote.nomination} = ${dbtNomination.id}
               INNER JOIN ${dbtCategory} ON ${dbtNomination.category} = ${dbtCategory.id}
             WHERE
-              ${dbtVote.user} = ${user.id}
-              AND ${dbtCategory.id} = ${input.categoryId}::uuid
+              ${dbtVote.user} = ${ctx.session.user.id}
+              AND ${dbtCategory.slug} = ${input.categorySlug}
           )  
       `);
 
       await ctx.db
         .insert(dbtVote)
-        .values({ nomination: input.nominationId, user: user.id });
+        .values({ nomination: input.nominationId, user: ctx.session.user.id });
       return {
         success: true,
       };

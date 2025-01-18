@@ -1,16 +1,17 @@
-import { useState, useEffect } from "react";
-import { Badge } from "@/components/ui/badge";
-import { CastVoteButton } from "@/components/votes/CastVoteButton";
-import { type Nomination } from "@/types/nominations";
-import Link from "next/link";
-import PhArrowUpRight from "~icons/ph/arrow-up-right";
+"use client";
 import { SocialMediaBadge } from "@/components/SocialMediaBadge";
+import { CastVoteButton } from "@/components/votes/CastVoteButton";
+import { type FullNomination } from "@/server/api/routers/nominations";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface MovieInfoProps {
-  nomination: Nomination | null;
+  nomination: FullNomination | null;
 }
 
 export function MovieInfo({ nomination }: MovieInfoProps) {
+  const { slug: categorySlug } = useParams();
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [charLimit, setCharLimit] = useState(180);
 
@@ -25,7 +26,9 @@ export function MovieInfo({ nomination }: MovieInfoProps) {
   }, []);
 
   if (!nomination) {
-    return <h2 className="py-4 text-2xl text-foreground">What's your vote?</h2>;
+    return (
+      <h2 className="py-4 text-2xl text-foreground">{"What's your vote?"}</h2>
+    );
   }
 
   const description = nomination.movie.description ?? "";
@@ -108,7 +111,7 @@ export function MovieInfo({ nomination }: MovieInfoProps) {
         {/* Confirmação de voto */}
         <CastVoteButton
           nominationId={nomination.id}
-          categoryId={nomination.category}
+          categorySlug={categorySlug as string}
         />
       </div>
     </div>

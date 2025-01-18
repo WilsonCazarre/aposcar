@@ -19,7 +19,6 @@ export function VotePageContent({
   prevCategory,
   nextCategory,
   categoryPoints,
-  nominations,
 }: CategoryWithNavigation) {
   const [selectedNomination, setSelectedNomination] =
     useState<Nomination | null>(null);
@@ -60,7 +59,7 @@ export function VotePageContent({
         </div>
 
         <MovieSelector
-          nominations={nominations}
+          categorySlug={currentCategory.slug}
           selectedId={selectedNomination?.id ?? null}
           onSelect={setSelectedNomination}
         />

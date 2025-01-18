@@ -1,21 +1,27 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
-import { type Nomination } from "@/types/nominations";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { type FullNomination } from "@/server/api/routers/nominations";
-import { Badge } from "@/components/ui/badge";
+import { api } from "@/trpc/react";
 
 interface MovieSelectorProps {
-  nominations: FullNomination[];
   selectedId: string | null;
+  categorySlug: string;
   onSelect: (nomination: FullNomination) => void;
 }
 
 export function MovieSelector({
-  nominations,
   selectedId,
   onSelect,
+  categorySlug,
 }: MovieSelectorProps) {
+  const { data } = api.nominations.getCategoryWithNavigation.useQuery({
+    categorySlug,
+  });
+  const nominations = data?.nominations
+
   const SelectedBadge = () => (
     <div className="absolute right-0 z-50 rounded-bl-lg bg-primary p-1 text-xs font-semibold text-primary-foreground">
       this one
@@ -27,7 +33,7 @@ export function MovieSelector({
       <div className="lg:hidden">
         <ScrollArea className="w-full whitespace-nowrap">
           <div className="flex flex-row gap-4 p-2">
-            {nominations.map((nomination) => (
+            {nominations?.map((nomination) => (
               <div key={nomination.id} className="relative shrink-0">
                 {nomination.isUserVote && <SelectedBadge />}
                 <Image
@@ -43,7 +49,7 @@ export function MovieSelector({
                   }
                   width={120}
                   height={180}
-                  className={`shrink-0 cursor-pointer rounded-md object-cover ${
+                  className={`h-full cursor-pointer rounded-md object-cover ${
                     selectedId === nomination.id
                       ? "outline outline-primary"
                       : "hover:outline hover:outline-foreground"
@@ -59,7 +65,7 @@ export function MovieSelector({
 
       {/* Desktop view */}
       <div className="hidden w-full gap-2 p-2 lg:flex">
-        {nominations.map((nomination) => (
+        {nominations?.map((nomination) => (
           <div
             key={nomination.id}
             className={`relative aspect-[2/3] flex-1 cursor-pointer rounded-md ${
