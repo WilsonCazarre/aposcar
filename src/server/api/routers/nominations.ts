@@ -52,6 +52,7 @@ export const nominationsRouter = createTRPCRouter({
           id: dbtNomination.id,
           description: dbtNomination.description,
           isWinner: dbtNomination.isWinner,
+          isWinnerLastUpdate: dbtNomination.isWinnerLastUpdate,
           category: dbtNomination.category,
           categoryName: dbtCategory.name,
           isUserVote: isNotNull(dbtVote.user).as<boolean>("isUserVote"),
