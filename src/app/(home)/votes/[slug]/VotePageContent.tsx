@@ -34,6 +34,7 @@ export function VotePageContent({
   prevCategory,
   nextCategory,
   categoryPoints,
+  nominations,
   categories,
 }: Props) {
   const [selectedNomination, setSelectedNomination] =
@@ -58,7 +59,7 @@ export function VotePageContent({
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>No vote selected</DialogTitle>
+            <DialogTitle>You didn't confirm your vote!</DialogTitle>
             <DialogDescription>
               Are you sure you want to leave without voting in this category?
             </DialogDescription>
@@ -88,13 +89,19 @@ export function VotePageContent({
                 variant="outline"
                 asChild
                 className="h-8 w-8 p-0 lg:h-12 lg:w-12"
+                onClick={() =>
+                  handleNavigationAttempt(prevCategory?.slug ?? "")
+                }
               >
                 <div>
                   <PhArrowLeft className="h-4 w-4 lg:h-5 lg:w-5" />
                 </div>
               </Button>
 
-              <CategoriesList categories={categories} />
+              <CategoriesList
+                categories={categories}
+                onNavigate={handleNavigationAttempt}
+              />
 
               <Button
                 variant="outline"
@@ -120,6 +127,8 @@ export function VotePageContent({
           <MovieSelector
             categorySlug={currentCategory.slug}
             selectedId={selectedNomination?.id ?? null}
+            nextCategorySlug={nextCategory?.slug}
+            nominations={nominations}
             onSelect={setSelectedNomination}
           />
         </div>
@@ -138,12 +147,12 @@ export function VotePageContent({
             <div className="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-l from-transparent to-background" />
           </div>
 
-          <div className="lg:relative lg:z-10 lg:[&>*]:pt-[calc(100%*6/16)]">
+          <div className="lg:relative lg:z-10 lg:[&>*]:pt-[calc(100%*5/16)]">
             <MovieInfo nomination={selectedNomination} />
           </div>
         </div>
       </div>
-      <div className="fixed bottom-14 left-0 right-0">
+      <div className="fixed bottom-14 left-0 right-0 hidden lg:block">
         <VoteNavigator categories={categories} />
       </div>
     </div>

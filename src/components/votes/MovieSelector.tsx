@@ -11,6 +11,9 @@ import { CastVoteButton } from "@/components/votes/CastVoteButton";
 interface MovieSelectorProps {
   selectedId: string | null;
   categorySlug: string;
+  nextCategorySlug?: string;
+  nominations: FullNomination[];
+
   onSelect: (nomination: FullNomination) => void;
 }
 
@@ -18,12 +21,9 @@ export function MovieSelector({
   selectedId,
   onSelect,
   categorySlug,
+  nominations,
+  nextCategorySlug,
 }: MovieSelectorProps) {
-  const { data } = api.nominations.getCategoryWithNavigation.useQuery({
-    categorySlug,
-  });
-  const nominations = data?.nominations;
-
   const SelectedBadge = () => (
     <div className="absolute right-0 z-50 rounded-bl-lg bg-primary p-1 text-xs font-semibold text-primary-foreground">
       Your vote
@@ -62,6 +62,7 @@ export function MovieSelector({
                   <CastVoteButton
                     nominationId={nomination.id}
                     categorySlug={categorySlug}
+                    nextCategorySlug={nextCategorySlug}
                   />
                 )}
               </div>
@@ -98,7 +99,7 @@ export function MovieSelector({
               fill
               className="rounded-md object-cover"
             />
-            {(selectedId === nomination.id && !nomination.isUserVote) && (
+            {selectedId === nomination.id && !nomination.isUserVote && (
               <CastVoteButton
                 nominationId={nomination.id}
                 categorySlug={categorySlug}

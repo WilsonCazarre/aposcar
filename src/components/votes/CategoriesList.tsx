@@ -9,12 +9,16 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { type Category } from "@/server/api/zod/schema";
 import Link from "next/link";
+import { useState } from "react";
 
 interface Props {
   categories: Category[];
+  onNavigate: (slug: string) => void;
 }
 
-export function CategoriesList({ categories }: Props) {
+export function CategoriesList({ categories, onNavigate }: Props) {
+  const [showList, setShowList] = useState(false);
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -33,13 +37,15 @@ export function CategoriesList({ categories }: Props) {
         >
           {categories.map((category) => (
             <div className="flex flex-col" key={category.id}>
-              <Link
-                key={category.id}
-                href={`/votes/${category.slug}`}
-                className="border border-secondary px-4 py-2 hover:bg-secondary"
+              <button
+                onClick={() => {
+                  setShowList(false);
+                  onNavigate(category.slug);
+                }}
+                className="border border-secondary px-4 py-2 text-left hover:bg-secondary"
               >
                 {category.name}
-              </Link>
+              </button>
             </div>
           ))}
         </ScrollArea>
