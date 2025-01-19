@@ -72,7 +72,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (token.username) {
         session.user.username = token.username;
       }
-      console.log({ newSession: session });
       return session;
     },
   },
