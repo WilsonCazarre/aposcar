@@ -97,7 +97,7 @@ export function MovieInfo({ nomination }: MovieInfoProps) {
       </div>
 
       {/* Ações */}
-      <div className="flex w-full items-start justify-between">
+      <div className="flex w-full">
         {/* Links */}
         <div>
           {nomination.movie.letterboxd && (
@@ -107,12 +107,6 @@ export function MovieInfo({ nomination }: MovieInfoProps) {
             />
           )}
         </div>
-
-        {/* Confirmação de voto */}
-        <CastVoteButton
-          nominationId={nomination.id}
-          categorySlug={categorySlug as string}
-        />
       </div>
     </div>
   );

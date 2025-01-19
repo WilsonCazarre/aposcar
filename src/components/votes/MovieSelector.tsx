@@ -6,6 +6,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { type FullNomination } from "@/server/api/routers/nominations";
 import { api } from "@/trpc/react";
 import { cn } from "@/lib/utils";
+import { CastVoteButton } from "@/components/votes/CastVoteButton";
 
 interface MovieSelectorProps {
   selectedId: string | null;
@@ -57,6 +58,12 @@ export function MovieSelector({
                   )}
                   onClick={() => onSelect(nomination)}
                 />
+                {selectedId === nomination.id && !nomination.isUserVote && (
+                  <CastVoteButton
+                    nominationId={nomination.id}
+                    categorySlug={categorySlug}
+                  />
+                )}
               </div>
             ))}
           </div>
@@ -91,6 +98,12 @@ export function MovieSelector({
               fill
               className="rounded-md object-cover"
             />
+            {(selectedId === nomination.id && !nomination.isUserVote) && (
+              <CastVoteButton
+                nominationId={nomination.id}
+                categorySlug={categorySlug}
+              />
+            )}
           </div>
         ))}
       </div>

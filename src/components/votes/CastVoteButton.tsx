@@ -21,11 +21,12 @@ export const CastVoteButton = ({ nominationId, categorySlug }: Props) => {
 
   return (
     <Button
+      className="absolute bottom-0 w-full rounded-sm"
       onClick={() => {
         mutate({ nominationId, categorySlug });
       }}
     >
-      {isPending ? <PhCircleNotch className="animate-spin" /> : "Cast vote"}
+      {isPending ? <PhCircleNotch className="animate-spin" /> : "Confirm vote"}
     </Button>
   );
 };

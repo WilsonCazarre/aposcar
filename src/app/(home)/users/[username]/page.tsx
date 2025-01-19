@@ -1,5 +1,13 @@
 import { SocialMediaBadge } from "@/components/SocialMediaBadge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { db } from "@/server/db";
 import { users } from "@/server/db/schema/auth";
 import { api } from "@/trpc/server";
@@ -8,6 +16,8 @@ import { notFound } from "next/navigation";
 const UserPage = async ({ params }: { params: { username: string } }) => {
   const { maxScore, usersScores } = await api.votes.getUserRankings();
   const winningNominations = await api.nominations.getWinningNominations();
+
+  console.log("winningNominations", winningNominations);
 
   const currentUser = usersScores.find(
     (user) => user.username === params.username,
@@ -48,7 +58,25 @@ const UserPage = async ({ params }: { params: { username: string } }) => {
       </div>
 
       {/* Votes table */}
-      <div className="lg:w-2/3"></div>
+      <div className="lg:w-2/3">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Category</TableHead>
+              <TableHead>Your Vote</TableHead>
+              <TableHead>Winner</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {/* {userVotes.map((vote) => (
+              <TableRow key={vote.id}>
+                <TableCell>{vote.categoryName}</TableCell>
+                <TableCell>{vote.isWinner ? "✅" : "❌"}</TableCell>
+              </TableRow>
+            ))} */}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 };

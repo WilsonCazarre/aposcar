@@ -14,6 +14,14 @@ import { type Unpacked } from "@/lib/utils";
 import { CategoriesList } from "@/components/votes/CategoriesList";
 import { type Category } from "@/server/api/zod/schema";
 import { VoteNavigator } from "@/components/votes/VoteNavigator";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useRouter } from "next/navigation";
 
 type Nomination = Unpacked<CategoryWithNavigation["nominations"]>;
 
@@ -30,9 +38,48 @@ export function VotePageContent({
 }: Props) {
   const [selectedNomination, setSelectedNomination] =
     useState<Nomination | null>(null);
+  const [showDialog, setShowDialog] = useState(false);
+  const [pendingNavigation, setPendingNavigation] = useState<string | null>(
+    null,
+  );
+  const router = useRouter();
+
+  const handleNavigationAttempt = (slug: string) => {
+    if (!selectedNomination) {
+      setShowDialog(true);
+      setPendingNavigation(slug);
+    } else {
+      router.push(`/votes/${slug}`);
+    }
+  };
 
   return (
     <div className="relative">
+      <Dialog open={showDialog} onOpenChange={setShowDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>No vote selected</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to leave without voting in this category?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-4">
+            <Button variant="outline" onClick={() => setShowDialog(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                if (pendingNavigation) {
+                  router.push(`/votes/${pendingNavigation}`);
+                }
+              }}
+            >
+              Leave anyway
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <div className="flex h-full flex-col pb-8 lg:flex-row lg:gap-16 lg:pb-0">
         <div className="flex flex-col gap-4 pb-4 lg:h-full lg:w-1/2 lg:justify-between lg:p-0">
           <div className="flex flex-col gap-4">
@@ -42,9 +89,9 @@ export function VotePageContent({
                 asChild
                 className="h-8 w-8 p-0 lg:h-12 lg:w-12"
               >
-                <Link href={`/votes/${prevCategory?.slug}`}>
+                <div>
                   <PhArrowLeft className="h-4 w-4 lg:h-5 lg:w-5" />
-                </Link>
+                </div>
               </Button>
 
               <CategoriesList categories={categories} />
@@ -53,10 +100,13 @@ export function VotePageContent({
                 variant="outline"
                 asChild
                 className="h-8 w-8 p-0 lg:h-12 lg:w-12"
+                onClick={() =>
+                  handleNavigationAttempt(nextCategory?.slug ?? "")
+                }
               >
-                <Link href={`/votes/${nextCategory?.slug}`}>
+                <div>
                   <PhArrowRight className="h-4 w-4 lg:h-5 lg:w-5" />
-                </Link>
+                </div>
               </Button>
             </div>
 
@@ -94,7 +144,7 @@ export function VotePageContent({
         </div>
       </div>
       <div className="fixed bottom-14 left-0 right-0">
-        <VoteNavigator categories={categories}/>
+        <VoteNavigator categories={categories} />
       </div>
     </div>
   );
