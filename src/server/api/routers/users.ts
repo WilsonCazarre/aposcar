@@ -28,6 +28,6 @@ export const usersRouter = createTRPCRouter({
       if (!user) {
         throw new TRPCError({ code: "BAD_REQUEST", message: "User not found" });
       }
-      return user
+      return user;
     }),
 });

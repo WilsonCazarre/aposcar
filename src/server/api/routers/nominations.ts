@@ -149,6 +149,7 @@ export const nominationsRouter = createTRPCRouter({
         nominations: nominations,
       };
     }),
+  
   getCategories: publicProcedure
     .output(categorySchema.array())
     .query(async ({ ctx }) => {

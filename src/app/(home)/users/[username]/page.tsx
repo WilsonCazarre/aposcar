@@ -15,15 +15,18 @@ import { notFound } from "next/navigation";
 
 const UserPage = async ({ params }: { params: { username: string } }) => {
   const { maxScore, usersScores } = await api.votes.getUserRankings();
-  const winningNominations = await api.nominations.getWinningNominations();
-
-  console.log("winningNominations", winningNominations);
 
   const currentUser = usersScores.find(
     (user) => user.username === params.username,
   );
 
   if (!currentUser) return notFound();
+
+  const { votedNominations, winningNominations} = await api.votes.getCurrentUserVotes({
+    username: currentUser.username,
+  });
+
+  // TODO: Fodase eu desisto
 
   return (
     <div className="flex flex-col gap-6 lg:flex-row">

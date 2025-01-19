@@ -8,6 +8,8 @@ import {
   dbtCategory,
   dbtNomination,
   dbtVote,
+  dbtMovie,
+  dbtReceiver,
 } from "@/server/db/schema/aposcar";
 import { users } from "@/server/db/schema/auth";
 import { desc, eq, sql, sum } from "drizzle-orm";
@@ -24,22 +26,26 @@ const castVoteInputSchema = z.object({
   categorySlug: z.string(),
 });
 
+const getCurrentUserVotesInputSchema = z.object({
+  username: z.string(),
+});
+
 export const votesRouter = createTRPCRouter({
-  getCurrentUserVotes: protectedProcedure
-    .output(getCurrentUserVotesSchema.array())
-    .query(async ({ ctx }) => {
-      const results = await ctx.db
-        .select({
-          id: dbtVote.id,
-          isWinner: dbtNomination.isWinner,
-          categoryName: dbtCategory.name,
-        })
-        .from(dbtVote)
-        .innerJoin(dbtNomination, eq(dbtVote.nomination, dbtNomination.id))
-        .innerJoin(dbtCategory, eq(dbtVote.category, dbtCategory.id))
-        .innerJoin(users, eq(users.id, ctx.session.user.id));
-      return results;
-    }),
+  // getCurrentUserVotes: protectedProcedure
+  //   .output(getCurrentUserVotesSchema.array())
+  //   .query(async ({ ctx }) => {
+  //     const results = await ctx.db
+  //       .select({
+  //         id: dbtVote.id,
+  //         isWinner: dbtNomination.isWinner,
+  //         categoryName: dbtCategory.name,
+  //       })
+  //       .from(dbtVote)
+  //       .innerJoin(dbtNomination, eq(dbtVote.nomination, dbtNomination.id))
+  //       .innerJoin(dbtCategory, eq(dbtVote.category, dbtCategory.id))
+  //       .innerJoin(users, eq(users.id, ctx.session.user.id));
+  //     return results;
+  //   }),
 
   castVote: protectedProcedure
     .input(castVoteInputSchema)
@@ -118,4 +124,39 @@ export const votesRouter = createTRPCRouter({
 
     return { usersScores: usersData, maxScore: scoreData[0]?.maxScore ?? 0 };
   }),
+
+  getCurrentUserVotes: publicProcedure
+    .input(getCurrentUserVotesInputSchema)
+    .query(async ({ ctx, input }) => {
+      const winningNominations = ctx.db
+        .select({
+          categoryName: dbtCategory.name,
+          movieName: dbtMovie.name,
+          receiverName: dbtReceiver.name,
+          description: dbtNomination.description,
+        })
+        .from(dbtNomination)
+        .where(eq(dbtNomination.isWinner, true))
+        .innerJoin(dbtCategory, eq(dbtNomination.category, dbtCategory.id))
+        .innerJoin(dbtMovie, eq(dbtNomination.movie, dbtMovie.id))
+        .leftJoin(dbtReceiver, eq(dbtNomination.receiver, dbtReceiver.id))
+        .as("winningNominations");
+
+      const votedNominations = await ctx.db
+        .select({
+          categoryName: dbtCategory.name,
+          movieName: dbtMovie.name,
+          receiverName: dbtReceiver.name,
+          description: dbtNomination.description,
+        })
+        .from(dbtVote)
+        .innerJoin(dbtNomination, eq(dbtVote.nomination, dbtNomination.id))
+        .innerJoin(dbtCategory, eq(dbtNomination.category, dbtCategory.id))
+        .innerJoin(dbtMovie, eq(dbtNomination.movie, dbtMovie.id))
+        .leftJoin(dbtReceiver, eq(dbtNomination.receiver, dbtReceiver.id))
+        .innerJoin(users, eq(users.username, input.username))
+        .as("votedNominations");
+
+      return { votedNominations, winningNominations };
+    }),
 });
