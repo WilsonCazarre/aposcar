@@ -16,7 +16,6 @@ import PhSignOut from "~icons/ph/sign-out";
 // import PhFlask from "~icons/ph/flask";
 // import PhUser from "~icons/ph/user";
 // import PhTicket from "~icons/ph/ticket"
-import { type Session } from "next-auth";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { useSession, signOut } from "next-auth/react";

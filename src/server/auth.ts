@@ -1,5 +1,5 @@
-import NextAuth, { User, type DefaultSession } from "next-auth";
-import Google, { GoogleProfile } from "next-auth/providers/google";
+import NextAuth, { type DefaultSession } from "next-auth";
+import Google, { type GoogleProfile } from "next-auth/providers/google";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "@/server/db";
 import {
@@ -52,7 +52,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async jwt({ token, user, session, trigger }) {
       // console.dir({ token, user, session, trigger }, { depth: null });
-      if (trigger === "update" && session.user.username) {
+      if (trigger === "update" && session?.user?.username) {
         token.username = session.user.username;
       }
       if (user) {
@@ -62,7 +62,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return token;
     },
-    async session({ session, token, user, trigger }) {
+    async session({ session, token }) {
       if (session?.user) {
         session.user.username = token.username as string;
         session.user.id = token.id as string;
@@ -70,7 +70,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
 
       if (token.username) {
-        session.user.username = token.username;
+        session.user.username = token.username as string;
       }
       return session;
     },
