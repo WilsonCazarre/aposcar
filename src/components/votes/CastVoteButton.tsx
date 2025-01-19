@@ -25,8 +25,6 @@ export const CastVoteButton = ({
         categorySlug,
       });
 
-      console.log("nextCategorySlug", nextCategorySlug);
-
       if (nextCategorySlug) {
         router.push(`/votes/${nextCategorySlug}`);
       }

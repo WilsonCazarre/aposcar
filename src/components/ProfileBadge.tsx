@@ -57,6 +57,10 @@ export const AvatarDropdown: React.FC = () => {
           <Link href="/votes">Cast your vote!</Link>
         </DropdownMenuItem>
 
+        <DropdownMenuItem asChild>
+          <Link href={`users/${session.user.username}`}>Your Profile</Link>
+        </DropdownMenuItem>
+
         {session.user?.role === "admin" && (
           <DropdownMenuItem asChild>
             <Link href="/admin">Admin Tools</Link>

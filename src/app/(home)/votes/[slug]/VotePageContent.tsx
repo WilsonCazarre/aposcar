@@ -46,7 +46,8 @@ export function VotePageContent({
   const router = useRouter();
 
   const handleNavigationAttempt = (slug: string) => {
-    if (!selectedNomination) {
+    const hasUserVote = nominations.some((nomination) => nomination.isUserVote);
+    if (!hasUserVote) {
       setShowDialog(true);
       setPendingNavigation(slug);
     } else {
@@ -89,13 +90,12 @@ export function VotePageContent({
                 variant="outline"
                 asChild
                 className="h-8 w-8 p-0 lg:h-12 lg:w-12"
-                onClick={() =>
-                  handleNavigationAttempt(prevCategory?.slug ?? "")
-                }
               >
-                <div>
+                <Link
+                  href={`/votes/${prevCategory?.slug}`}     
+                >
                   <PhArrowLeft className="h-4 w-4 lg:h-5 lg:w-5" />
-                </div>
+                </Link>
               </Button>
 
               <CategoriesList

@@ -24,6 +24,7 @@ export function MovieSelector({
   nominations,
   nextCategorySlug,
 }: MovieSelectorProps) {
+
   const SelectedBadge = () => (
     <div className="absolute right-0 z-50 rounded-bl-lg bg-primary p-1 text-xs font-semibold text-primary-foreground">
       Your vote
