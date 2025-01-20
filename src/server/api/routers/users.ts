@@ -10,10 +10,6 @@ import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
-export const getUserByIdInputSchema = z.object({
-  id: z.string(),
-});
-
 export const usersRouter = createTRPCRouter({
   onboardUser: protectedProcedure
     .input(onboardUserInputSchema)
@@ -40,7 +36,7 @@ export const usersRouter = createTRPCRouter({
       return user;
     }),
   getUserById: publicProcedure
-    .input(getUserByIdInputSchema)
+    .input(z.string())
     .output(userSelectSchema)
     .query(async ({ input, ctx }) => {
       const user = (

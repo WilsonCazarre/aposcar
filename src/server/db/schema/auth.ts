@@ -6,11 +6,12 @@ import {
   primaryKey,
   integer,
   pgEnum,
+  uuid,
 } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import type { AdapterAccountType } from "next-auth/adapters";
 import { z } from "zod";
-import { dbtVote } from "./aposcar";
+import { dbtVote, dbtMovie } from "./aposcar";
 import { relations } from "drizzle-orm";
 
 export const userRoles = pgEnum("userRoles", ["basic", "admin"]);
@@ -26,6 +27,12 @@ export const users = pgTable("user", {
   completedOnboarding: timestamp("completedOnboarding", { mode: "date" }),
   image: text("image"),
   role: userRoles("role").default("basic").notNull(),
+
+  favoriteMovie: uuid("favoriteMovie").references(() => dbtMovie.id),
+  letterboxdUsername: text("letterboxdUsername"),
+  twitterUsername: text("twitterUsername"),
+  bskyUsername: text("bskyUsername"),
+  githubUsername: text("githubUsername"),
 });
 
 export const userSelectSchema = createSelectSchema(users);
@@ -98,7 +105,10 @@ export const authenticators = pgTable(
   }),
 );
 
-export const userVotesRelation = relations(users, ({ many }) => ({
+export const userVotesRelation = relations(users, ({ many, one }) => ({
   votes: many(dbtVote),
+  favoriteMovie: one(dbtMovie, {
+    fields: [users.favoriteMovie],
+    references: [dbtMovie.id],
+  }),
 }));
-

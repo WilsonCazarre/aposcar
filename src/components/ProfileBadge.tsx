@@ -33,7 +33,7 @@ export const AvatarDropdown: React.FC = () => {
     return <LoginButton />;
   }
 
-  // const user = await api.users.getUserById({ id: session.user.id });
+  // const user = await api.users.getUserById(session.user.id);
 
   return (
     <DropdownMenu>

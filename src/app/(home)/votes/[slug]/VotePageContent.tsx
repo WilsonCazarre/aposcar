@@ -146,7 +146,7 @@ export function VotePageContent({
             <div className="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-l from-transparent to-background" />
           </div>
 
-          <div className="lg:relative lg:z-10 lg:[&>*]:pt-[calc(100%*5/16)]">
+          <div className="lg:relative lg:z-10 lg:pt-[calc(100%*5/16)]">
             <MovieInfo nomination={selectedNomination} />
           </div>
         </div>

@@ -23,11 +23,9 @@ const UserPage = async ({ params }: { params: { username: string } }) => {
 
   if (!currentUser) return notFound();
 
-  const userNominations = await api.votes.getUserNominations({
-    username: currentUser.username,
-  });
-
-  // TODO: Fodase eu desisto
+  const { userNominations, userData } = await api.votes.getUserProfile(
+    params.username,
+  );
 
   return (
     <div className="flex flex-col gap-6 lg:flex-row">
@@ -36,49 +34,64 @@ const UserPage = async ({ params }: { params: { username: string } }) => {
         {/* Backdrop */}
         <div className="fixed left-0 top-0 block aspect-[16/9] w-full lg:w-1/3">
           <Image
-            src={
-              "https://a.ltrbxd.com/resized/sm/upload/8h/bo/f2/33/Screen%20Shot%202023-03-15%20at%2016.47.26-1200-1200-675-675-crop-000000.jpg"
-            }
+            src={userData?.backdrop ?? "/images/backdrop-placeholder.png"}
             alt="Favorite movie backdrop"
             fill
             className="object-cover"
           />
 
           <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-b from-transparent to-background" />
-          <div className="absolute inset-y-0 right-0 lg:w-1/2 lg:bg-gradient-to-r lg:from-transparent lg:to-background" />
+          <div className="absolute inset-y-0 right-0 lg:w-1/4 lg:bg-gradient-to-r lg:from-transparent lg:to-background" />
         </div>
 
-        <div className="relative z-10 bg-red-500 [&>*]:pt-[calc(100%*5/16)]">
+        <div className="relative z-10 space-y-4 pt-[calc(100%*5/16)]">
           {/* Avatar & username */}
           <div className="flex items-center">
             <Avatar className="h-24 w-24">
-              <AvatarImage src={currentUser.profilePic ?? ""} />
+              <AvatarImage src={userData?.profilePic ?? ""} />
               <AvatarFallback className="text-4xl font-bold">
-                {currentUser.username?.[0]?.toUpperCase() ?? "@"}
+                {userData?.username?.[0]?.toUpperCase() ?? "@"}
               </AvatarFallback>
             </Avatar>
-            <h1 className="pt-4 text-2xl font-bold">{currentUser.username}</h1>
+            <h1 className="pt-4 text-2xl font-bold">{userData?.username}</h1>
           </div>
 
           {/* Social medias */}
-          <div className="space-x-2">
-            <SocialMediaBadge
-              url={`https://letterboxd.com/` + currentUser.username}
-              text="Letterboxd"
-            />
-            <SocialMediaBadge
-              url={`https://x.com/` + currentUser.username}
-              text="Twitter"
-            />
-            <SocialMediaBadge
-              url={`https://bsky.app/profile/` + currentUser.username}
-              text="Bluesky"
-            />
+          <div className="flex flex-wrap gap-2">
+            {userData?.letterboxdUsername && (
+              <SocialMediaBadge
+                url={`https://letterboxd.com/` + userData.letterboxdUsername}
+                text="Letterboxd"
+              />
+            )}
+            {userData?.twitterUsername && (
+              <SocialMediaBadge
+                url={`https://x.com/` + userData.twitterUsername}
+                text="Twitter"
+              />
+            )}
+            {userData?.bskyUsername && (
+              <SocialMediaBadge
+                url={`https://bsky.app/profile/` + userData.bskyUsername}
+                text="Bluesky"
+              />
+            )}
+            {userData?.githubUsername && (
+              <SocialMediaBadge
+                url={`https://github.com/` + userData.githubUsername}
+                text="Github"
+              />
+            )}
           </div>
 
           {/* General Info */}
-          <div className="text-sm text-muted-foreground">
-            (Add score, position, favorite movie, etc here)
+          <div>
+            {userData?.favoriteMovie && (
+              <div>
+                <p className="text-sm text-muted-foreground">Favorite movie of the season:</p>
+                <p className="text-lg text-primary">{userData.favoriteMovie}</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

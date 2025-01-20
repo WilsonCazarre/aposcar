@@ -26,9 +26,6 @@ const castVoteInputSchema = z.object({
   categorySlug: z.string(),
 });
 
-const getCurrentUserVotesInputSchema = z.object({
-  username: z.string(),
-});
 
 export const votesRouter = createTRPCRouter({
   // getCurrentUserVotes: protectedProcedure
@@ -125,8 +122,8 @@ export const votesRouter = createTRPCRouter({
     return { usersScores: usersData, maxScore: scoreData[0]?.maxScore ?? 0 };
   }),
 
-  getUserNominations: publicProcedure
-    .input(getCurrentUserVotesInputSchema)
+  getUserProfile: publicProcedure
+    .input(z.string())
     .query(async ({ ctx, input }) => {
       const winningNominations = await ctx.db
         .select({
@@ -156,7 +153,7 @@ export const votesRouter = createTRPCRouter({
         .innerJoin(dbtCategory, eq(dbtNomination.category, dbtCategory.id))
         .innerJoin(dbtMovie, eq(dbtNomination.movie, dbtMovie.id))
         .leftJoin(dbtReceiver, eq(dbtNomination.receiver, dbtReceiver.id))
-        .innerJoin(users, eq(users.username, input.username));
+        .innerJoin(users, eq(users.username, input));
 
       const userNominations = votedNominations.map((voted) => {
         const winner = winningNominations.find(
@@ -174,6 +171,22 @@ export const votesRouter = createTRPCRouter({
         };
       });
 
-      return userNominations;
+      const userData = await ctx.db
+        .select({
+          username: users.username,
+          profilePic: users.image,
+          role: users.role,
+          favoriteMovie: dbtMovie.name,
+          backdrop: dbtMovie.backdrop,
+          letterboxdUsername: users.letterboxdUsername,
+          twitterUsername: users.twitterUsername,
+          bskyUsername: users.bskyUsername,
+          githubUsername: users.githubUsername,
+        })
+        .from(users)
+        .leftJoin(dbtMovie, eq(users.favoriteMovie, dbtMovie.id))
+        .where(eq(users.username, input));
+
+      return { userNominations: userNominations, userData: userData[0] };
     }),
 });
