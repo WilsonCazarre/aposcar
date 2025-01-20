@@ -27,7 +27,6 @@ export const users = pgTable("user", {
   completedOnboarding: timestamp("completedOnboarding", { mode: "date" }),
   image: text("image"),
   role: userRoles("role").default("basic").notNull(),
-
   favoriteMovie: uuid("favoriteMovie").references(() => dbtMovie.id),
   letterboxdUsername: text("letterboxdUsername"),
   twitterUsername: text("twitterUsername"),

@@ -26,7 +26,6 @@ const castVoteInputSchema = z.object({
   categorySlug: z.string(),
 });
 
-
 export const votesRouter = createTRPCRouter({
   // getCurrentUserVotes: protectedProcedure
   //   .output(getCurrentUserVotesSchema.array())
@@ -125,6 +124,13 @@ export const votesRouter = createTRPCRouter({
   getUserProfile: publicProcedure
     .input(z.string())
     .query(async ({ ctx, input }) => {
+      const allCategories = await ctx.db
+        .select({
+          id: dbtCategory.id,
+          categoryName: dbtCategory.name,
+        })
+        .from(dbtCategory);
+
       const winningNominations = await ctx.db
         .select({
           id: dbtNomination.id,
@@ -155,15 +161,18 @@ export const votesRouter = createTRPCRouter({
         .leftJoin(dbtReceiver, eq(dbtNomination.receiver, dbtReceiver.id))
         .innerJoin(users, eq(users.username, input));
 
-      const userNominations = votedNominations.map((voted) => {
+      const userNominations = allCategories.map((category) => {
+        const voted = votedNominations.find(
+          (vote) => vote.categoryName === category.categoryName,
+        );
         const winner = winningNominations.find(
-          (win) => win.categoryName === voted.categoryName,
+          (win) => win.categoryName === category.categoryName,
         );
         return {
-          categoryName: voted.categoryName,
-          votedMovieName: voted.votedMovieName,
-          votedReceiverName: voted.votedReceiverName,
-          votedDescription: voted.votedDescription,
+          categoryName: category.categoryName,
+          votedMovieName: voted?.votedMovieName ?? null,
+          votedReceiverName: voted?.votedReceiverName ?? null,
+          votedDescription: voted?.votedDescription ?? null,
           isWinner: voted?.isWinner ?? false,
           winnerMovieName: winner?.winnerMovieName ?? null,
           winnerReceiverName: winner?.winnerReceiverName ?? null,

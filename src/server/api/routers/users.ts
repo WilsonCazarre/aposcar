@@ -35,16 +35,16 @@ export const usersRouter = createTRPCRouter({
       }
       return user;
     }),
-  getUserById: publicProcedure
-    .input(z.string())
-    .output(userSelectSchema)
-    .query(async ({ input, ctx }) => {
-      const user = (
-        await ctx.db.select().from(users).where(eq(users.id, input.id))
-      ).at(0);
-      if (!user) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "User not found" });
-      }
-      return user;
-    }),
+  // getUserById: publicProcedure
+  //   .input(z.string())
+  //   .output(userSelectSchema)
+  //   .query(async ({ input, ctx }) => {
+  //     const user = (
+  //       await ctx.db.select().from(users).where(eq(users.id, input.id))
+  //     ).at(0);
+  //     if (!user) {
+  //       throw new TRPCError({ code: "BAD_REQUEST", message: "User not found" });
+  //     }
+  //     return user;
+  //   }),
 });

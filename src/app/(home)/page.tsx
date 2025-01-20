@@ -40,7 +40,7 @@ export default async function Home() {
       )}
 
       <div className="lg:w-2/3">
-        <h2 className="pb-4 pl-4 text-2xl font-semibold">Ranking</h2>
+        <h2 className="pb-4 pl-4 text-2xl font-bold">Ranking</h2>
 
         <ScrollArea
           className="flex flex-col gap-4 rounded-md border"
@@ -93,7 +93,7 @@ export default async function Home() {
       </div>
 
       <div className="flex flex-col lg:w-1/3">
-        <h2 className="pb-4 pl-4 text-2xl font-semibold">Last updates</h2>
+        <h2 className="pb-4 pl-4 text-2xl font-bold">Last updates</h2>
 
         {winningNominations.length === 0 && (
           <div>

@@ -13,8 +13,13 @@ import { users } from "@/server/db/schema/auth";
 import { api } from "@/trpc/server";
 import { notFound } from "next/navigation";
 import PhTrophy from "~icons/ph/trophy";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { auth } from "@/server/auth";
+import { Button } from "@/components/ui/button";
 
 const UserPage = async ({ params }: { params: { username: string } }) => {
+  const session = await auth();
+
   const { maxScore, usersScores } = await api.votes.getUserRankings();
 
   const currentUser = usersScores.find(
@@ -32,7 +37,7 @@ const UserPage = async ({ params }: { params: { username: string } }) => {
       {/* User info */}
       <div className="flex flex-col lg:w-1/3">
         {/* Backdrop */}
-        <div className="fixed left-0 top-0 block aspect-[16/9] w-full lg:w-1/3">
+        <div className="absolute left-0 top-0 block aspect-[16/9] w-full lg:w-1/3">
           <Image
             src={userData?.backdrop ?? "/images/backdrop-placeholder.png"}
             alt="Favorite movie backdrop"
@@ -46,14 +51,30 @@ const UserPage = async ({ params }: { params: { username: string } }) => {
 
         <div className="relative z-10 space-y-4 pt-[calc(100%*5/16)]">
           {/* Avatar & username */}
-          <div className="flex items-center">
-            <Avatar className="h-24 w-24">
-              <AvatarImage src={userData?.profilePic ?? ""} />
-              <AvatarFallback className="text-4xl font-bold">
-                {userData?.username?.[0]?.toUpperCase() ?? "@"}
-              </AvatarFallback>
-            </Avatar>
-            <h1 className="pt-4 text-2xl font-bold">{userData?.username}</h1>
+          <div className="flex w-full items-center justify-between">
+            <div className="flex items-center">
+              <Avatar
+                className={`h-16 w-16 lg:h-24 lg:w-24 ${
+                  currentUser.username === session?.user.username
+                    ? "border-2 border-primary"
+                    : ""
+                }`}
+              >
+                <AvatarImage src={userData?.profilePic ?? ""} />
+                <AvatarFallback className="text-2xl font-bold lg:text-4xl">
+                  {userData?.username?.[0]?.toUpperCase() ?? "@"}
+                </AvatarFallback>
+              </Avatar>
+              <h1 className="pl-4 pt-8 text-2xl font-bold">
+                {userData?.username}
+              </h1>
+            </div>
+
+            {currentUser.username === session?.user.username && (
+              <Button variant="outline" size="sm">
+                Edit profile
+              </Button>
+            )}
           </div>
 
           {/* Social medias */}
@@ -88,8 +109,12 @@ const UserPage = async ({ params }: { params: { username: string } }) => {
           <div>
             {userData?.favoriteMovie && (
               <div>
-                <p className="text-sm text-muted-foreground">Favorite movie of the season:</p>
-                <p className="text-lg text-primary">{userData.favoriteMovie}</p>
+                <p className="text-sm text-muted-foreground">
+                  Favorite movie of the season:
+                </p>
+                <p className="text-lg font-bold text-primary">
+                  {userData.favoriteMovie}
+                </p>
               </div>
             )}
           </div>
@@ -98,45 +123,65 @@ const UserPage = async ({ params }: { params: { username: string } }) => {
 
       {/* Votes table */}
       <div className="lg:w-2/3">
+        <h2 className="pb-4 pl-4 text-2xl font-bold">Your votes</h2>
+
+        {/* TODO: Apply this later https://github.com/shadcn-ui/ui/issues/1151 */}
+        {/* <ScrollArea
+          className="flex flex-col"
+          style={{ maxHeight: "calc(100vh - 16rem)" }}
+        > */}
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="font-bold">
               <TableHead>Category</TableHead>
               <TableHead>Your Vote</TableHead>
               <TableHead>Winner</TableHead>
             </TableRow>
           </TableHeader>
+
           <TableBody>
             {userNominations.map((nomination) => (
               <TableRow key={nomination.categoryName}>
-                <TableCell>{nomination.categoryName}</TableCell>
+                <TableCell className="font-bold">
+                  {nomination.categoryName}
+                </TableCell>
                 <TableCell>
                   {nomination.votedReceiverName ? (
-                    <>
-                      {nomination.votedReceiverName}{" "}
-                      {nomination.votedDescription} {nomination.votedMovieName}
-                    </>
+                    <span className={nomination.isWinner ? "text-primary" : ""}>
+                      {nomination.votedReceiverName}
+                      {" ("}
+                      {nomination.votedMovieName}
+                      {") "}
+                    </span>
                   ) : (
-                    nomination.votedMovieName
+                    (nomination.votedMovieName ?? (
+                      <span className="text-sm font-normal text-muted-foreground">
+                        You haven't voted in this category!
+                      </span>
+                    ))
                   )}
                 </TableCell>
                 <TableCell>
                   {nomination.isWinner ? (
                     <PhTrophy className="text-primary" />
                   ) : nomination.winnerReceiverName ? (
-                    <>
-                      {nomination.winnerReceiverName}{" "}
-                      {nomination.winnerDescription}{" "}
+                    <span>
+                      {nomination.winnerReceiverName}
+                      {" ("}
                       {nomination.winnerMovieName}
-                    </>
+                      {") "}
+                    </span>
                   ) : (
-                    (nomination.votedMovieName ?? "-")
+                    (nomination.votedMovieName ?? (
+                      <span className="text-sm text-muted-foreground">-</span>
+                    ))
                   )}
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
+        {/* </ScrollArea> */}
       </div>
     </div>
   );
