@@ -21,7 +21,7 @@ import Link from "next/link";
 const UserPage = async ({ params }: { params: { username: string } }) => {
   const session = await auth();
 
-  const { maxScore, usersScores } = await api.votes.getUserRankings();
+  const { maxData, usersScores } = await api.votes.getUserRankings();
 
   const currentUser = usersScores.find(
     (user) => user.username === params.username,
@@ -116,25 +116,34 @@ const UserPage = async ({ params }: { params: { username: string } }) => {
           <div className="w-full space-y-4 py-2">
             <div className="flex w-full gap-4">
               <div className="w-1/2 rounded-sm border px-4 py-2">
-                <p className="text-sm text-muted-foreground">Total score:</p>
+                <p className="text-sm text-muted-foreground">Total score</p>
                 <div className="flex items-end justify-between">
                   <div className="text-xl font-bold">
                     {currentUser.score} points
                   </div>
-                  <div className="text-muted-foreground">/ {maxScore}</div>
+                  <div className="text-muted-foreground">
+                    / {maxData.maxScore}
+                  </div>
                 </div>
               </div>
 
               <div className="w-1/2 rounded-sm border px-4 py-2">
-                <p className="text-sm text-muted-foreground">Posição:</p>
-                <p className="text-xl font-bold">{currentUser.position}º</p>
+                <p className="text-sm text-muted-foreground">Position</p>
+                <div className="flex items-end justify-between">
+                  <div className="text-xl font-bold">
+                    {currentUser.position}º
+                  </div>
+                  <div className="text-muted-foreground">
+                    / {maxData.maxPosition}
+                  </div>
+                </div>
               </div>
             </div>
 
             {userData?.favoriteMovie && (
-              <div className="w-full rounded-sm border px-4 py-2">
+              <div className="w-full rounded-sm border p-4">
                 <p className="text-sm text-muted-foreground">
-                  Favorite movie of the season:
+                  Favorite movie of the season
                 </p>
                 <p className="text-lg font-bold">{userData.favoriteMovie}</p>
               </div>
@@ -196,7 +205,7 @@ const UserPage = async ({ params }: { params: { username: string } }) => {
                         {") "}
                       </span>
                     ) : (
-                      (nomination.votedMovieName ?? (
+                      (nomination.winnerMovieName ?? (
                         <span className="text-sm text-muted-foreground">-</span>
                       ))
                     )}

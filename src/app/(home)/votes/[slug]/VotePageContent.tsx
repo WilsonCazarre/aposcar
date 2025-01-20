@@ -21,22 +21,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
+import { api } from "@/trpc/react";
 
 type Nomination = Unpacked<CategoryWithNavigation["nominations"]>;
 
 interface Props extends CategoryWithNavigation {
+  categorySlug: string;
   categories: Category[];
 }
 
-export function VotePageContent({
-  currentCategory,
-  prevCategory,
-  nextCategory,
-  categoryPoints,
-  nominations,
-  categories,
-}: Props) {
+export function VotePageContent({ categorySlug, categories }: Props) {
   const [selectedNomination, setSelectedNomination] =
     useState<Nomination | null>(null);
   const [showDialog, setShowDialog] = useState(false);
@@ -44,6 +39,20 @@ export function VotePageContent({
     null,
   );
   const router = useRouter();
+
+  const { data } = api.nominations.getCategoryWithNavigation.useQuery({
+    categorySlug,
+  });
+
+  if (!data?.currentCategory) return <>Loading...</>;
+
+  const {
+    currentCategory,
+    prevCategory,
+    nextCategory,
+    categoryPoints,
+    nominations,
+  } = data;
 
   const handleNavigationAttempt = (slug: string) => {
     const hasUserVote = nominations.some((nomination) => nomination.isUserVote);
@@ -91,9 +100,7 @@ export function VotePageContent({
                 asChild
                 className="h-8 w-8 p-0 lg:h-12 lg:w-12"
               >
-                <Link
-                  href={`/votes/${prevCategory?.slug}`}     
-                >
+                <Link href={`/votes/${prevCategory?.slug}`}>
                   <PhArrowLeft className="h-4 w-4 lg:h-5 lg:w-5" />
                 </Link>
               </Button>

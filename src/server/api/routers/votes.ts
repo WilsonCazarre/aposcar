@@ -85,7 +85,7 @@ export const votesRouter = createTRPCRouter({
         username: users.username,
         profilePic: users.image,
         position:
-          sql<number>`DENSE_RANK() OVER (ORDER BY COALESCE(SUM(CASE WHEN ${dbtNomination.isWinner} THEN ${dbtCategoryTypesPoints.points} ELSE 0 END), 0) DESC)`.as(
+          sql<number>`RANK() OVER (ORDER BY COALESCE(SUM(CASE WHEN ${dbtNomination.isWinner} THEN ${dbtCategoryTypesPoints.points} ELSE 0 END), 0) DESC)`.as(
             "position",
           ),
         score:
@@ -118,7 +118,15 @@ export const votesRouter = createTRPCRouter({
       )
       .where(dbtNomination.isWinner.getSQL());
 
-    return { usersScores: usersData, maxScore: scoreData[0]?.maxScore ?? 0 };
+    const maxData = {
+      maxScore: scoreData[0]?.maxScore ?? 0,
+      maxPosition:
+        usersData.length > 0
+          ? Math.max(...usersData.map((user) => user.position))
+          : 0,
+    };
+
+    return { usersScores: usersData, maxData: maxData };
   }),
 
   getUserProfile: publicProcedure

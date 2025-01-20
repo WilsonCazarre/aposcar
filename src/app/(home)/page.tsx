@@ -19,7 +19,7 @@ export default async function Home() {
   const session = await auth();
 
   const winningNominations = await api.nominations.getWinningNominations();
-  const { maxScore, usersScores } = await api.votes.getUserRankings();
+  const { maxData, usersScores } = await api.votes.getUserRankings();
 
   // TODO: No mobile adicionar um toggle entre a visão de ranking e updates.
   return (
@@ -82,7 +82,7 @@ export default async function Home() {
                   </div>
                   <Progress
                     value={Number(user.score)}
-                    max={Number(maxScore)}
+                    max={Number(maxData.maxScore)}
                     className="h-2"
                   />
                 </div>

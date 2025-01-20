@@ -19,7 +19,7 @@ import PhSignOut from "~icons/ph/sign-out";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { useSession, signOut } from "next-auth/react";
-import { api } from "@/trpc/server";
+import { api } from "@/trpc/react";
 
 const LoginButton = () => (
   <Button variant="ghost" asChild>
@@ -61,7 +61,7 @@ export const AvatarDropdown: React.FC = () => {
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
-          <Link href={`users/${session.user.username}`}>Your Profile</Link>
+          <Link href={`/users/${session.user.username}`}>Your Profile</Link>
         </DropdownMenuItem>
 
         {session.user?.role === "admin" && (

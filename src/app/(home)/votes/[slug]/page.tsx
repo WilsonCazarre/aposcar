@@ -14,17 +14,11 @@ export const generateStaticParams = async () => {
 };
 
 const VotePage = async ({ params }: { params: { slug: string } }) => {
-  const data = await api.nominations.getCategoryWithNavigation({
-    categorySlug: params.slug,
-  });
-
   const categories = await api.nominations.getCategories();
-
-  if (!data.currentCategory) return notFound();
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <VotePageContent {...data} categories={categories} />
+      <VotePageContent categorySlug={params.slug} categories={categories} />
     </Suspense>
   );
 };
