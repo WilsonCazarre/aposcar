@@ -12,6 +12,7 @@ import {
   dbtReceiver,
 } from "@/server/db/schema/aposcar";
 import { users } from "@/server/db/schema/auth";
+import { count } from "console";
 import { desc, eq, is, sql, sum } from "drizzle-orm";
 import { z } from "zod";
 
@@ -92,6 +93,10 @@ export const votesRouter = createTRPCRouter({
           sql<number>`COALESCE(SUM(CASE WHEN ${dbtNomination.isWinner} THEN ${dbtCategoryTypesPoints.points} ELSE 0 END), 0)`.as(
             "score",
           ),
+        correctAnswers:
+          sql<number>`COUNT(CASE WHEN ${dbtNomination.isWinner} THEN 1 ELSE NULL END)`.as(
+            "correctAnswers",
+          ),
       })
       .from(users)
       .leftJoin(dbtVote, eq(dbtVote.user, users.id))
@@ -109,6 +114,10 @@ export const votesRouter = createTRPCRouter({
     const scoreData = await ctx.db
       .select({
         maxScore: sum(dbtCategoryTypesPoints.points),
+        maxCorrectAnswers:
+          sql<number>`COUNT(CASE WHEN ${dbtNomination.isWinner} THEN 1 ELSE NULL END)`.as(
+            "maxCorrectAnswers",
+          ),
       })
       .from(dbtNomination)
       .innerJoin(dbtCategory, eq(dbtNomination.category, dbtCategory.id))
@@ -124,6 +133,7 @@ export const votesRouter = createTRPCRouter({
         usersData.length > 0
           ? Math.max(...usersData.map((user) => user.position))
           : 0,
+      maxCorrectAnswers: scoreData[0]?.maxCorrectAnswers ?? 0,
     };
 
     return { usersScores: usersData, maxData: maxData };
