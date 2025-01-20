@@ -12,6 +12,7 @@ import { db } from "@/server/db";
 import { users } from "@/server/db/schema/auth";
 import { api } from "@/trpc/server";
 import { notFound } from "next/navigation";
+import PhTrophy from "~icons/ph/trophy";
 
 const UserPage = async ({ params }: { params: { username: string } }) => {
   const { maxScore, usersScores } = await api.votes.getUserRankings();
@@ -22,7 +23,7 @@ const UserPage = async ({ params }: { params: { username: string } }) => {
 
   if (!currentUser) return notFound();
 
-  const { votedNominations, winningNominations} = await api.votes.getCurrentUserVotes({
+  const userNominations = await api.votes.getUserNominations({
     username: currentUser.username,
   });
 
@@ -71,12 +72,34 @@ const UserPage = async ({ params }: { params: { username: string } }) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {/* {userVotes.map((vote) => (
-              <TableRow key={vote.id}>
-                <TableCell>{vote.categoryName}</TableCell>
-                <TableCell>{vote.isWinner ? "✅" : "❌"}</TableCell>
+            {userNominations.map((nomination) => (
+              <TableRow key={nomination.categoryName}>
+                <TableCell>{nomination.categoryName}</TableCell>
+                <TableCell>
+                  {nomination.votedReceiverName ? (
+                    <>
+                      {nomination.votedReceiverName}{" "}
+                      {nomination.votedDescription} {nomination.votedMovieName}
+                    </>
+                  ) : (
+                    nomination.votedMovieName
+                  )}
+                </TableCell>
+                <TableCell>
+                  {nomination.isWinner ? (
+                    <PhTrophy className="text-primary" />
+                  ) : nomination.winnerReceiverName ? (
+                    <>
+                      {nomination.winnerReceiverName}{" "}
+                      {nomination.winnerDescription}{" "}
+                      {nomination.winnerMovieName}
+                    </>
+                  ) : (
+                    (nomination.votedMovieName ?? "-")
+                  )}
+                </TableCell>
               </TableRow>
-            ))} */}
+            ))}
           </TableBody>
         </Table>
       </div>

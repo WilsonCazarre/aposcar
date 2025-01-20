@@ -7,12 +7,17 @@ import { type FullNomination } from "@/server/api/routers/nominations";
 import { api } from "@/trpc/react";
 import { cn } from "@/lib/utils";
 import { CastVoteButton } from "@/components/votes/CastVoteButton";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface MovieSelectorProps {
   selectedId: string | null;
   categorySlug: string;
   nextCategorySlug?: string;
-  nominations: FullNomination[];
 
   onSelect: (nomination: FullNomination) => void;
 }
@@ -21,15 +26,19 @@ export function MovieSelector({
   selectedId,
   onSelect,
   categorySlug,
-  nominations,
   nextCategorySlug,
 }: MovieSelectorProps) {
+  const { data } = api.nominations.getCategoryWithNavigation.useQuery({
+    categorySlug,
+  });
+  const nominations = data?.nominations;
 
   const SelectedBadge = () => (
     <div className="absolute right-0 z-50 rounded-bl-lg bg-primary p-1 text-xs font-semibold text-primary-foreground">
       Your vote
     </div>
   );
+
   return (
     <>
       {/* Mobile view */}
@@ -74,6 +83,7 @@ export function MovieSelector({
       </div>
 
       {/* Desktop view */}
+
       <div className="hidden w-full gap-2 p-2 lg:flex">
         {nominations?.map((nomination) => (
           <div

@@ -12,7 +12,7 @@ import {
   dbtReceiver,
 } from "@/server/db/schema/aposcar";
 import { users } from "@/server/db/schema/auth";
-import { desc, eq, sql, sum } from "drizzle-orm";
+import { desc, eq, is, sql, sum } from "drizzle-orm";
 import { z } from "zod";
 
 const getCurrentUserVotesSchema = z.object({
@@ -125,38 +125,55 @@ export const votesRouter = createTRPCRouter({
     return { usersScores: usersData, maxScore: scoreData[0]?.maxScore ?? 0 };
   }),
 
-  getCurrentUserVotes: publicProcedure
+  getUserNominations: publicProcedure
     .input(getCurrentUserVotesInputSchema)
     .query(async ({ ctx, input }) => {
-      const winningNominations = ctx.db
+      const winningNominations = await ctx.db
         .select({
+          id: dbtNomination.id,
           categoryName: dbtCategory.name,
-          movieName: dbtMovie.name,
-          receiverName: dbtReceiver.name,
-          description: dbtNomination.description,
+          winnerMovieName: dbtMovie.name,
+          winnerReceiverName: dbtReceiver.name,
+          winnerDescription: dbtNomination.description,
         })
         .from(dbtNomination)
         .where(eq(dbtNomination.isWinner, true))
         .innerJoin(dbtCategory, eq(dbtNomination.category, dbtCategory.id))
         .innerJoin(dbtMovie, eq(dbtNomination.movie, dbtMovie.id))
-        .leftJoin(dbtReceiver, eq(dbtNomination.receiver, dbtReceiver.id))
-        .as("winningNominations");
+        .leftJoin(dbtReceiver, eq(dbtNomination.receiver, dbtReceiver.id));
 
       const votedNominations = await ctx.db
         .select({
+          id: dbtNomination.id,
           categoryName: dbtCategory.name,
-          movieName: dbtMovie.name,
-          receiverName: dbtReceiver.name,
-          description: dbtNomination.description,
+          votedMovieName: dbtMovie.name,
+          votedReceiverName: dbtReceiver.name,
+          votedDescription: dbtNomination.description,
+          isWinner: dbtNomination.isWinner,
         })
         .from(dbtVote)
         .innerJoin(dbtNomination, eq(dbtVote.nomination, dbtNomination.id))
         .innerJoin(dbtCategory, eq(dbtNomination.category, dbtCategory.id))
         .innerJoin(dbtMovie, eq(dbtNomination.movie, dbtMovie.id))
         .leftJoin(dbtReceiver, eq(dbtNomination.receiver, dbtReceiver.id))
-        .innerJoin(users, eq(users.username, input.username))
-        .as("votedNominations");
+        .innerJoin(users, eq(users.username, input.username));
 
-      return { votedNominations, winningNominations };
+      const userNominations = votedNominations.map((voted) => {
+        const winner = winningNominations.find(
+          (win) => win.categoryName === voted.categoryName,
+        );
+        return {
+          categoryName: voted.categoryName,
+          votedMovieName: voted.votedMovieName,
+          votedReceiverName: voted.votedReceiverName,
+          votedDescription: voted.votedDescription,
+          isWinner: voted?.isWinner ?? false,
+          winnerMovieName: winner?.winnerMovieName ?? null,
+          winnerReceiverName: winner?.winnerReceiverName ?? null,
+          winnerDescription: winner?.winnerDescription ?? null,
+        };
+      });
+
+      return userNominations;
     }),
 });

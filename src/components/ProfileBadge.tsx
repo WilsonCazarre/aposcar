@@ -19,6 +19,7 @@ import PhSignOut from "~icons/ph/sign-out";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { useSession, signOut } from "next-auth/react";
+import { api } from "@/trpc/server";
 
 const LoginButton = () => (
   <Button variant="ghost" asChild>
@@ -31,6 +32,8 @@ export const AvatarDropdown: React.FC = () => {
   if (!session) {
     return <LoginButton />;
   }
+
+  // const user = await api.users.getUserById({ id: session.user.id });
 
   return (
     <DropdownMenu>

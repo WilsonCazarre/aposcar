@@ -1,9 +1,18 @@
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "@/server/api/trpc";
 import { onboardUserInputSchema } from "@/server/api/zod/users";
 import { auth } from "@/server/auth";
 import { users, userSelectSchema } from "@/server/db/schema/auth";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
+import { z } from "zod";
+
+export const getUserByIdInputSchema = z.object({
+  id: z.string(),
+});
 
 export const usersRouter = createTRPCRouter({
   onboardUser: protectedProcedure
@@ -24,6 +33,18 @@ export const usersRouter = createTRPCRouter({
           .select()
           .from(users)
           .where(eq(users.id, ctx.session.user.id))
+      ).at(0);
+      if (!user) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "User not found" });
+      }
+      return user;
+    }),
+  getUserById: publicProcedure
+    .input(getUserByIdInputSchema)
+    .output(userSelectSchema)
+    .query(async ({ input, ctx }) => {
+      const user = (
+        await ctx.db.select().from(users).where(eq(users.id, input.id))
       ).at(0);
       if (!user) {
         throw new TRPCError({ code: "BAD_REQUEST", message: "User not found" });

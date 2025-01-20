@@ -128,7 +128,6 @@ export function VotePageContent({
             categorySlug={currentCategory.slug}
             selectedId={selectedNomination?.id ?? null}
             nextCategorySlug={nextCategory?.slug}
-            nominations={nominations}
             onSelect={setSelectedNomination}
           />
         </div>
