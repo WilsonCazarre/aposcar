@@ -35,16 +35,24 @@ export const usersRouter = createTRPCRouter({
       }
       return user;
     }),
-  // getUserById: publicProcedure
-  //   .input(z.string())
-  //   .output(userSelectSchema)
-  //   .query(async ({ input, ctx }) => {
-  //     const user = (
-  //       await ctx.db.select().from(users).where(eq(users.id, input.id))
-  //     ).at(0);
-  //     if (!user) {
-  //       throw new TRPCError({ code: "BAD_REQUEST", message: "User not found" });
-  //     }
-  //     return user;
-  //   }),
+  updateUser: protectedProcedure
+    .input(
+      z.object({
+        username: z.string(),
+        profilePic: z.string().optional(),
+        favoriteMovie: z.string().optional(),
+        letterboxdUsername: z.string().optional(),
+        twitterUsername: z.string().optional(),
+        bskyUsername: z.string().optional(),
+        githubUsername: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db
+        .update(users)
+        .set(input)
+        .where(eq(users.id, ctx.session.user.id));
+
+      return { success: true };
+    }),
 });

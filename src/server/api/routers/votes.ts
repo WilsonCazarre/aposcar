@@ -182,6 +182,7 @@ export const votesRouter = createTRPCRouter({
 
       const userData = await ctx.db
         .select({
+          id: users.id,
           username: users.username,
           profilePic: users.image,
           role: users.role,

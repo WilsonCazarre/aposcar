@@ -39,7 +39,7 @@ export default async function Home() {
         </div>
       )}
 
-      <div className="lg:w-2/3">
+      <div className="pt-4 lg:w-2/3 lg:p-0">
         <h2 className="pb-4 pl-4 text-2xl font-bold">Ranking</h2>
 
         <ScrollArea

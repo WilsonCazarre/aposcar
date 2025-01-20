@@ -16,6 +16,7 @@ import PhTrophy from "~icons/ph/trophy";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { auth } from "@/server/auth";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const UserPage = async ({ params }: { params: { username: string } }) => {
   const session = await auth();
@@ -37,25 +38,29 @@ const UserPage = async ({ params }: { params: { username: string } }) => {
       {/* User info */}
       <div className="flex flex-col lg:w-1/3">
         {/* Backdrop */}
-        <div className="absolute left-0 top-0 block aspect-[16/9] w-full lg:w-1/3">
-          <Image
-            src={userData?.backdrop ?? "/images/backdrop-placeholder.png"}
-            alt="Favorite movie backdrop"
-            fill
-            className="object-cover"
-          />
+        {userData?.backdrop && (
+          <div className="absolute left-0 top-0 block aspect-[16/9] w-full lg:w-1/3">
+            <Image
+              src={userData?.backdrop ?? "/images/backdrop-placeholder.png"}
+              alt="Favorite movie backdrop"
+              fill
+              className="object-cover"
+            />
 
-          <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-b from-transparent to-background" />
-          <div className="absolute inset-y-0 right-0 lg:w-1/4 lg:bg-gradient-to-r lg:from-transparent lg:to-background" />
-        </div>
+            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-b from-transparent to-background" />
+            <div className="absolute inset-y-0 right-0 lg:w-1/4 lg:bg-gradient-to-r lg:from-transparent lg:to-background" />
+          </div>
+        )}
 
-        <div className="relative z-10 space-y-4 pt-[calc(100%*5/16)]">
+        <div
+          className={`w-full space-y-4 ${userData?.backdrop ? "relative z-10 pt-[calc(100%*5/16)]" : ""}`}
+        >
           {/* Avatar & username */}
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center">
               <Avatar
                 className={`h-16 w-16 lg:h-24 lg:w-24 ${
-                  currentUser.username === session?.user.username
+                  userData?.username === session?.user.username
                     ? "border-2 border-primary"
                     : ""
                 }`}
@@ -70,15 +75,17 @@ const UserPage = async ({ params }: { params: { username: string } }) => {
               </h1>
             </div>
 
-            {currentUser.username === session?.user.username && (
-              <Button variant="outline" size="sm">
-                Edit profile
-              </Button>
+            {userData?.id === session?.user.id && (
+              <Link href={`/users/${userData?.username}/edit`}>
+                <Button variant="outline" size="sm">
+                  Edit profile
+                </Button>
+              </Link>
             )}
           </div>
 
           {/* Social medias */}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 py-2">
             {userData?.letterboxdUsername && (
               <SocialMediaBadge
                 url={`https://letterboxd.com/` + userData.letterboxdUsername}
@@ -106,15 +113,30 @@ const UserPage = async ({ params }: { params: { username: string } }) => {
           </div>
 
           {/* General Info */}
-          <div>
+          <div className="w-full space-y-4 py-2">
+            <div className="flex w-full gap-4">
+              <div className="w-1/2 rounded-sm border px-4 py-2">
+                <p className="text-sm text-muted-foreground">Total score:</p>
+                <div className="flex items-end justify-between">
+                  <div className="text-xl font-bold">
+                    {currentUser.score} points
+                  </div>
+                  <div className="text-muted-foreground">/ {maxScore}</div>
+                </div>
+              </div>
+
+              <div className="w-1/2 rounded-sm border px-4 py-2">
+                <p className="text-sm text-muted-foreground">Posição:</p>
+                <p className="text-xl font-bold">{currentUser.position}º</p>
+              </div>
+            </div>
+
             {userData?.favoriteMovie && (
-              <div>
+              <div className="w-full rounded-sm border px-4 py-2">
                 <p className="text-sm text-muted-foreground">
                   Favorite movie of the season:
                 </p>
-                <p className="text-lg font-bold text-primary">
-                  {userData.favoriteMovie}
-                </p>
+                <p className="text-lg font-bold">{userData.favoriteMovie}</p>
               </div>
             )}
           </div>
@@ -122,66 +144,68 @@ const UserPage = async ({ params }: { params: { username: string } }) => {
       </div>
 
       {/* Votes table */}
-      <div className="lg:w-2/3">
+      <div className="py-2 lg:w-2/3 lg:p-0">
         <h2 className="pb-4 pl-4 text-2xl font-bold">Your votes</h2>
 
         {/* TODO: Apply this later https://github.com/shadcn-ui/ui/issues/1151 */}
-        {/* <ScrollArea
+        <ScrollArea
           className="flex flex-col"
           style={{ maxHeight: "calc(100vh - 16rem)" }}
-        > */}
-        <Table>
-          <TableHeader>
-            <TableRow className="font-bold">
-              <TableHead>Category</TableHead>
-              <TableHead>Your Vote</TableHead>
-              <TableHead>Winner</TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {userNominations.map((nomination) => (
-              <TableRow key={nomination.categoryName}>
-                <TableCell className="font-bold">
-                  {nomination.categoryName}
-                </TableCell>
-                <TableCell>
-                  {nomination.votedReceiverName ? (
-                    <span className={nomination.isWinner ? "text-primary" : ""}>
-                      {nomination.votedReceiverName}
-                      {" ("}
-                      {nomination.votedMovieName}
-                      {") "}
-                    </span>
-                  ) : (
-                    (nomination.votedMovieName ?? (
-                      <span className="text-sm font-normal text-muted-foreground">
-                        You haven't voted in this category!
-                      </span>
-                    ))
-                  )}
-                </TableCell>
-                <TableCell>
-                  {nomination.isWinner ? (
-                    <PhTrophy className="text-primary" />
-                  ) : nomination.winnerReceiverName ? (
-                    <span>
-                      {nomination.winnerReceiverName}
-                      {" ("}
-                      {nomination.winnerMovieName}
-                      {") "}
-                    </span>
-                  ) : (
-                    (nomination.votedMovieName ?? (
-                      <span className="text-sm text-muted-foreground">-</span>
-                    ))
-                  )}
-                </TableCell>
+        >
+          <Table>
+            <TableHeader>
+              <TableRow className="font-bold">
+                <TableHead>Category</TableHead>
+                <TableHead>Your Vote</TableHead>
+                <TableHead>Winner</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        {/* </ScrollArea> */}
+            </TableHeader>
+
+            <TableBody>
+              {userNominations.map((nomination) => (
+                <TableRow key={nomination.categoryName}>
+                  <TableCell className="font-bold">
+                    {nomination.categoryName}
+                  </TableCell>
+                  <TableCell>
+                    {nomination.votedReceiverName ? (
+                      <span
+                        className={nomination.isWinner ? "text-primary" : ""}
+                      >
+                        {nomination.votedReceiverName}
+                        {" ("}
+                        {nomination.votedMovieName}
+                        {") "}
+                      </span>
+                    ) : (
+                      (nomination.votedMovieName ?? (
+                        <span className="text-sm font-normal text-muted-foreground">
+                          You haven't voted in this category!
+                        </span>
+                      ))
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {nomination.isWinner ? (
+                      <PhTrophy className="text-primary" />
+                    ) : nomination.winnerReceiverName ? (
+                      <span>
+                        {nomination.winnerReceiverName}
+                        {" ("}
+                        {nomination.winnerMovieName}
+                        {") "}
+                      </span>
+                    ) : (
+                      (nomination.votedMovieName ?? (
+                        <span className="text-sm text-muted-foreground">-</span>
+                      ))
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </ScrollArea>
       </div>
     </div>
   );
